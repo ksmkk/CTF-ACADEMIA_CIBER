@@ -1,0 +1,3 @@
+Buen trabajo.
+Flag: ACADEMIA{miraste_mas_alla}
+Siguiente nivel: /nivel2/

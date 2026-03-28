@@ -1,0 +1,2 @@
+Flag: ACADEMIA{las_rutas_tambien_hablan}
+Siguiente nivel: /nivel3/

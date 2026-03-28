@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nivel 1</title>
+  <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Nivel 1: La primera mirada engana</h1>
+
+    <div class="box">
+      <p>Todo principiante mira la pantalla.</p>
+      <p>Todo analista revisa tambien lo que no se ve.</p>
+      <p class="clue">Pista visible: a veces el primer secreto no esta en la pagina, sino detras de ella.</p>
+      <p class="mini-tip">Mini ayuda: si te atoras, abre el codigo fuente de la pagina (Ctrl+U).</p>
+    </div>
+
+    <div class="box">
+      <h2>Validar flag y desbloquear</h2>
+      <p>Cuando la encuentres, cargala aqui para abrir el nivel 2.</p>
+      <form class="unlock" method="POST" action="/validar">
+        <input type="hidden" name="nivel" value="1">
+        <label for="flag1">Flag del nivel 1</label>
+        <input id="flag1" name="flag" autocomplete="off" placeholder="ACADEMIA{...}" required>
+        <button type="submit">Desbloquear nivel 2</button>
+      </form>
+    </div>
+
+    <p><a href="/">Volver al inicio</a></p>
+  </main>
+
+  <!-- Ayuda extra: en /nivel1/ hay un archivo de texto corto con la pista. -->
+</body>
+</html>

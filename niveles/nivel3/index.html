@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nivel 3</title>
+  <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Nivel 3: El codigo susurra</h1>
+
+    <div class="box">
+      <p>No todos los mensajes vienen en lenguaje humano.</p>
+      <p class="clue">Pista visible: los desarrolladores suelen dejar rastros en sus scripts.</p>
+      <p class="mini-tip">Mini ayuda: abre la consola del navegador (F12) para ver mensajes.</p>
+      <script src="/nivel3/codigo.js"></script>
+    </div>
+
+    <div class="box">
+      <h2>Validar flag y desbloquear</h2>
+      <p>Decodifica el mensaje y valida para abrir el nivel 4.</p>
+      <form class="unlock" method="POST" action="/validar">
+        <input type="hidden" name="nivel" value="3">
+        <label for="flag3">Flag del nivel 3</label>
+        <input id="flag3" name="flag" autocomplete="off" placeholder="ACADEMIA{...}" required>
+        <button type="submit">Desbloquear nivel 4</button>
+      </form>
+    </div>
+
+    <p><a href="/">Volver al inicio</a></p>
+  </main>
+</body>
+</html>

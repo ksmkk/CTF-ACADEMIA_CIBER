@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nivel 5</title>
+  <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Nivel 5: La ultima llave</h1>
+
+    <div class="box">
+      <p>Has llegado lejos.</p>
+      <p>La ultima bandera no esta en un comentario.</p>
+      <p>No esta en un script.</p>
+      <p>No esta dividida.</p>
+      <p class="clue">Esta donde suelen terminar las historias.</p>
+      <p class="mini-tip">Mini ayuda: piensa en un nombre de archivo final y simple.</p>
+    </div>
+
+    <div class="box">
+      <h2>Cierre del CTF</h2>
+      <p>Cuando tengas la bandera final, validala para cerrar la mision.</p>
+      <form class="unlock" method="POST" action="/validar">
+        <input type="hidden" name="nivel" value="5">
+        <label for="flag5">Flag final</label>
+        <input id="flag5" name="flag" autocomplete="off" placeholder="ACADEMIA{...}" required>
+        <button type="submit">Completar CTF</button>
+      </form>
+    </div>
+
+    <p><a href="/">Volver al inicio</a></p>
+  </main>
+</body>
+</html>

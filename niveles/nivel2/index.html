@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nivel 2</title>
+  <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Nivel 2: No todas las puertas tienen cartel</h1>
+
+    <div class="box">
+      <p>Hay puertas que existen aunque nadie las anuncie.</p>
+      <p class="clue">Pista visible: piensa en nombres clasicos para carpetas escondidas.</p>
+      <p class="mini-tip">Mini ayuda: prueba explorar subrutas dentro de /nivel2/.</p>
+    </div>
+
+    <div class="box">
+      <h2>Validar flag y desbloquear</h2>
+      <p>Ingresa la flag hallada en este nivel para abrir el nivel 3.</p>
+      <form class="unlock" method="POST" action="/validar">
+        <input type="hidden" name="nivel" value="2">
+        <label for="flag2">Flag del nivel 2</label>
+        <input id="flag2" name="flag" autocomplete="off" placeholder="ACADEMIA{...}" required>
+        <button type="submit">Desbloquear nivel 3</button>
+      </form>
+    </div>
+
+    <p><a href="/">Volver al inicio</a></p>
+  </main>
+
+  <!-- Ayuda extra: prueba dentro de /nivel2/oculto/ y mira si hay un txt. -->
+</body>
+</html>
