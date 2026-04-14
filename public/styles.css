@@ -431,17 +431,20 @@ a:hover {
 
 .hint-item {
   color: #ffeec9;
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  transition: opacity 0.35s ease, transform 0.35s ease, filter 0.35s ease;
 }
 
 .hint-hidden {
-  opacity: 0;
-  transform: translateY(6px);
+  opacity: 0.3;
+  filter: blur(4px);
+  user-select: none;
   pointer-events: none;
+  transition: opacity 0.35s ease, filter 0.35s ease;
 }
 
 .hint-visible {
   opacity: 1;
+  filter: blur(0);
   transform: translateY(0);
 }
 

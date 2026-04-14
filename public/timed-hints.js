@@ -11,6 +11,19 @@
 
       hint.classList.add('hint-hidden');
 
+      // Add disclaimer if not present
+      const listContainer = hint.closest('.timed-hints');
+      if (listContainer && !listContainer.dataset.disclaimerAdded) {
+        const disclaimer = document.createElement('p');
+        disclaimer.style.color = '#b6aa93';
+        disclaimer.style.fontSize = '12px';
+        disclaimer.style.fontStyle = 'italic';
+        disclaimer.style.margin = '0 0 10px 0';
+        disclaimer.textContent = '⏳ Las pistas se revelarán automáticamente a medida que pases tiempo en este desafío.';
+        listContainer.parentNode.insertBefore(disclaimer, listContainer);
+        listContainer.dataset.disclaimerAdded = '1';
+      }
+
       window.setTimeout(() => {
         hint.classList.remove('hint-hidden');
         hint.classList.add('hint-visible');
