@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nivel 1 | Banca vulnerable CSRF</title>
+  <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Nivel 1: Banca vulnerable</h1>
+
+    <div class="box">
+      <p>Usuario activo: <strong>alumno@academia.local</strong></p>
+      <p>Estado de sesion: <strong>Activa</strong> (simulada con cookie del navegador).</p>
+      <p class="clue">Este formulario no valida origen ni token CSRF.</p>
+    </div>
+
+    <div class="box">
+      <h2>Transferir fondos</h2>
+      <form id="transferForm" class="unlock">
+        <label for="to">Cuenta destino</label>
+        <input id="to" type="text" value="ahorro_personal" autocomplete="off" required>
+
+        <label for="amount">Monto</label>
+        <input id="amount" type="text" value="15000" autocomplete="off" required>
+
+        <button type="submit">Confirmar transferencia</button>
+      </form>
+      <p id="status" class="mini-tip" style="display:none;"></p>
+    </div>
+
+    <p><a href="/nivel1/">Volver a nivel 1</a></p>
+  </main>
+
+  <script>
+    (function () {
+      const status = document.getElementById('status');
+      const form = document.getElementById('transferForm');
+      const params = new URLSearchParams(window.location.search);
+
+      function processTransfer(target, amount, origin) {
+        const body = new URLSearchParams({ to: target, amount: amount, origin: origin });
+
+        fetch('/api/ctf/nivel1/transfer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            status.style.display = 'block';
+            if (data.solved && data.flag) {
+              status.innerHTML = data.message + ' Flag: <span class="flag">' + data.flag + '</span>';
+              return;
+            }
+
+            status.textContent = data.message || 'Operacion completada.';
+          })
+          .catch(() => {
+            status.style.display = 'block';
+            status.textContent = 'No se pudo procesar la transferencia.';
+          });
+      }
+
+      const qTo = params.get('to');
+      const qAmount = params.get('amount');
+      const qOrigin = params.get('origin');
+      if (qTo && qAmount) {
+        document.getElementById('to').value = qTo;
+        document.getElementById('amount').value = qAmount;
+        processTransfer(qTo, qAmount, qOrigin || 'self');
+      }
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const to = document.getElementById('to').value.trim();
+        const amount = document.getElementById('amount').value.trim();
+        processTransfer(to, amount, 'self');
+      });
+    })();
+  </script>
+  <script src="/public/lab-extras.js"></script>
+</body>
+</html>

@@ -1,2 +1,2 @@
-fragmentos_y_gana}
-Siguiente nivel: /nivel5/
+Recurso legacy sin uso en este flujo.
+La flag de este nivel ahora se obtiene via DOM XSS.

@@ -8,35 +8,144 @@
 </head>
 <body>
   <main class="container">
-    <h1>Mini CTF - Academia de Ciberseguridad</h1>
+    <section class="hero box">
+      <div class="badge">Academia de Ciberseguridad UCN</div>
+      <h1>Mini CTF Introductorio</h1>
+      <p>Entrenamiento formal y entretenido para aprender vulnerabilidades web con flags y desbloqueo secuencial en servidor.</p>
+      <div class="actions" style="margin-top:12px;">
+        <a class="btn btn-warmup" href="/warmup/">Warm-up Challenges</a>
+        <a id="ctfStartBtn" class="btn btn-disabled" href="/nivel1/" tabindex="-1" aria-disabled="true">Comenzar CTF principal</a>
+        <form method="POST" action="/reiniciar">
+          <button class="btn btn-ghost" type="submit">Reiniciar progreso</button>
+        </form>
+      </div>
+      <p id="heroState" class="mini-tip">Primero completa Warm-up Challenges para habilitar el CTF principal.</p>
+    </section>
 
-    <div class="box">
-      <p>Sean muy bienvenidos a la nueva Academia de Ciberseguridad UCN.</p>
-      <p>En esta academia, explorarás diferentes niveles de ciberseguridad.</p>
-      <p>No todo lo importante esta a la vista.</p>
-      <p>Mucha suerte para todos y que empiece el juego!</p>
-      <p>Comienza en: <a href="/nivel1/">/nivel1/</a></p>
-    </div>
+    <section class="box">
+      <h2>Fase 1: Warm-up Challenges (obligatoria)</h2>
+      <p>Contiene <strong>10 mini-niveles</strong>: 2 por cada vulnerabilidad del CTF final.</p>
+      <p>Al terminar esta fase, se habilita automaticamente el CTF principal de 5 niveles.</p>
+      <div class="stats">
+        <article class="stat-card">
+          <span class="stat-label">Warm-up desbloqueado</span>
+          <strong id="warmupUnlocked" class="stat-value">1</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Warm-up total</span>
+          <strong id="warmupTotal" class="stat-value">10</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Estado Warm-up</span>
+          <strong id="warmupState" class="stat-value">Pendiente</strong>
+        </article>
+      </div>
+    </section>
 
-    <div class="box">
-      <h2>Control de progreso</h2>
-      <p>Si te bloqueaste o quieres repetir el laboratorio, reinicia el avance:</p>
-      <form method="POST" action="/reiniciar" class="actions">
-        <button class="btn" type="submit">Reiniciar progreso</button>
-      </form>
-    </div>
+    <section class="box">
+      <h2>Fase 2: CTF principal</h2>
+      <div class="stats">
+        <article class="stat-card">
+          <span class="stat-label">Nivel desbloqueado</span>
+          <strong id="unlockedLevel" class="stat-value">1</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Niveles totales</span>
+          <strong id="totalLevels" class="stat-value">5</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Progreso</span>
+          <strong id="progressPct" class="stat-value">20%</strong>
+        </article>
+      </div>
+    </section>
+
+    <section class="level-grid" id="levelGrid"></section>
+
+    <section id="finalCard" class="box" style="display:none;">
+      <h2>Mision completada</h2>
+      <p class="flag">CTF principal completado con exito.</p>
+      <p>Excelente trabajo. Ya puedes repetir el recorrido o ajustar niveles para tu clase.</p>
+    </section>
   </main>
 
   <script>
     (function () {
       const params = new URLSearchParams(window.location.search);
-      if (!params.get('final')) return;
+      const levelGrid = document.getElementById('levelGrid');
+      const finalCard = document.getElementById('finalCard');
+      const ctfStartBtn = document.getElementById('ctfStartBtn');
+      const heroState = document.getElementById('heroState');
+      const names = {
+        1: 'CSRF Attack',
+        2: 'Login Debil (sin rate limit)',
+        3: 'SQL Injection no trivial',
+        4: 'Cross-Site Scripting (DOM)',
+        5: 'IDOR con Burp Suite'
+      };
 
-      const card = document.createElement('div');
-      card.className = 'box';
-      card.innerHTML = '<h2>Mision completada</h2><p class="flag">ACADEMIA{ctf_completado}</p><p>Excelente trabajo. Ya puedes repetir el recorrido o usarlo en clase.</p>';
-      document.querySelector('.container').appendChild(card);
+      if (params.get('final')) {
+        finalCard.style.display = 'block';
+      }
+
+      if (params.get('warmup') === 'done') {
+        heroState.textContent = 'Warm-up completado. El CTF principal ya esta habilitado.';
+      }
+
+      fetch('/api/warmup')
+        .then((res) => res.json())
+        .then(({ unlocked, total, completed }) => {
+          document.getElementById('warmupUnlocked').textContent = String(Math.min(unlocked, total));
+          document.getElementById('warmupTotal').textContent = String(total);
+          document.getElementById('warmupState').textContent = completed ? 'Completo' : 'Pendiente';
+
+          if (completed) {
+            ctfStartBtn.classList.remove('btn-disabled');
+            ctfStartBtn.removeAttribute('tabindex');
+            ctfStartBtn.removeAttribute('aria-disabled');
+          } else {
+            ctfStartBtn.setAttribute('href', '/warmup/');
+          }
+        });
+
+      fetch('/api/progreso')
+        .then((res) => res.json())
+        .then(({ unlocked, total, warmupCompleted }) => {
+          document.getElementById('unlockedLevel').textContent = String(unlocked);
+          document.getElementById('totalLevels').textContent = String(total);
+
+          const normalizedUnlocked = Math.max(unlocked, 0);
+          const percentage = Math.round((normalizedUnlocked / total) * 100);
+          document.getElementById('progressPct').textContent = `${percentage}%`;
+
+          if (!warmupCompleted) {
+            levelGrid.innerHTML = '<article class="box warning"><p>El CTF principal se desbloquea al terminar Warm-up Challenges.</p></article>';
+            return;
+          }
+
+          levelGrid.innerHTML = Array.from({ length: total }, (_, i) => i + 1)
+            .map((lvl) => {
+              const locked = lvl > unlocked;
+              const status = locked ? 'Bloqueado' : (lvl < unlocked ? 'Completado' : 'Disponible');
+              return `
+                <article class="box level-card ${locked ? 'locked' : 'open'}">
+                  <div class="level-top">
+                    <span class="level-id">Nivel ${lvl}</span>
+                    <span class="level-state">${status}</span>
+                  </div>
+                  <h3>${names[lvl]}</h3>
+                  <p>${locked ? 'Debes validar los niveles previos para habilitar este modulo.' : 'Disponible para trabajar en laboratorio.'}</p>
+                  <a class="btn ${locked ? 'btn-disabled' : ''}" href="/nivel${lvl}/" ${locked ? 'tabindex="-1" aria-disabled="true"' : ''}>Entrar</a>
+                </article>
+              `;
+            })
+            .join('');
+        })
+        .catch(() => {
+          levelGrid.innerHTML = '<article class="box warning"><p>No se pudo cargar el estado del laboratorio.</p></article>';
+        });
     })();
   </script>
+  <script src="/public/lab-extras.js"></script>
 </body>
 </html>

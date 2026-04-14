@@ -2,6 +2,41 @@
 
 Este documento resume como correr, jugar y explicar el laboratorio CTF web de 5 niveles.
 
+## 0) Estructura profesional del proyecto
+
+```text
+lab-ctf/
+	src/
+		app.js
+		server.js
+		config/
+			index.js
+			flags.js
+		middleware/
+			requireLevel.js
+		routes/
+			web.js
+		utils/
+			cookies.js
+			progress.js
+	niveles/
+		nivel1/
+		nivel2/
+		nivel3/
+		nivel4/
+		nivel5/
+	public/
+		styles.css
+	views/
+		home.html
+	.env.example
+	server.js
+	package.json
+```
+
+- El archivo raiz server.js queda como entrada simple.
+- La logica queda separada por responsabilidad en src/.
+
 ## 1) Como levantar el laboratorio
 
 1. Abrir terminal en la carpeta del proyecto.
@@ -16,6 +51,17 @@ npm install
 ```bash
 npm start
 ```
+
+Modo desarrollo (auto-recarga):
+
+```bash
+npm run dev
+```
+
+Variables de entorno opcionales:
+
+- PORT (por defecto 3000)
+- CTF_SECRET (firma del progreso)
 
 4. Abrir en navegador:
 

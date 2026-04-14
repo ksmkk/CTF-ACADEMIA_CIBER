@@ -8,13 +8,23 @@
 </head>
 <body>
   <main class="container">
-    <h1>Nivel 3: El codigo susurra</h1>
+    <h1>Nivel 3: SQL Injection no trivial</h1>
 
     <div class="box">
-      <p>No todos los mensajes vienen en lenguaje humano.</p>
-      <p class="clue">Pista visible: los desarrolladores suelen dejar rastros en sus scripts.</p>
-      <p class="mini-tip">Mini ayuda: abre la consola del navegador (F12) para ver mensajes.</p>
+      <p>Este login tiene un error y se puede saltar con una inyeccion SQL.</p>
+      <p class="clue">Usa una variante diferente al tipico OR 1=1.</p>
+      <p class="mini-tip">Prueba con UNION SELECT o con una variante por tiempo.</p>
+      <p><a href="/nivel3/sqli.html">Ir al login vulnerable a SQLi</a></p>
       <script src="/nivel3/codigo.js"></script>
+    </div>
+
+    <div class="box hint-panel">
+      <h4>Pistas por tiempo</h4>
+      <ul class="timed-hints">
+        <li class="hint-item" data-hint-delay="120000">2min: prueba un payload con UNION SELECT.</li>
+        <li class="hint-item" data-hint-delay="300000">5min: tambien puedes probar un payload que haga esperar.</li>
+        <li class="hint-item" data-hint-delay="480000">8min: si logras entrar con la inyeccion, veras la flag.</li>
+      </ul>
     </div>
 
     <div class="box">
@@ -30,5 +40,7 @@
 
     <p><a href="/">Volver al inicio</a></p>
   </main>
+  <script src="/public/timed-hints.js"></script>
+  <script src="/public/lab-extras.js"></script>
 </body>
 </html>

@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /nivel1/attacker.html
+# legacy-note: no exponer paginas de prueba de ataques

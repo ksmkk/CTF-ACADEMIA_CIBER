@@ -1,2 +1,3 @@
-Flag: ACADEMIA{las_rutas_tambien_hablan}
-Siguiente nivel: /nivel3/
+Credencial legacy detectada
+Modulo antiguo de login.
+Este recurso ya no define la prueba principal del nivel 2.

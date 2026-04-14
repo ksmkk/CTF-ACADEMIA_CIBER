@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nivel 3 | SQL Injection</title>
+  <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Nivel 3: SQL Injection no trivial</h1>
+
+    <div class="box">
+      <p>Login interno vulnerable con validacion insegura.</p>
+      <p class="clue">Debes evitar el clasico OR 1=1 y usar un enfoque mas avanzado.</p>
+      <p class="mini-tip">Ejemplos de enfoque: UNION SELECT, inyeccion con comentarios o condicion por tiempo.</p>
+    </div>
+
+    <div class="box">
+      <h2>Simulador vulnerable</h2>
+      <form id="sqliForm" class="unlock">
+        <label for="email">Email</label>
+        <input id="email" type="text" autocomplete="off" placeholder="user@correo.com" required>
+
+        <label for="password">Contrasena</label>
+        <input id="password" type="text" autocomplete="off" placeholder="********" required>
+
+        <button type="submit">Ingresar</button>
+      </form>
+      <p id="status" class="mini-tip" style="display:none;"></p>
+    </div>
+
+    <p><a href="/nivel3/">Volver a nivel 3</a></p>
+  </main>
+
+  <script>
+    (function () {
+      const form = document.getElementById('sqliForm');
+      const status = document.getElementById('status');
+
+      function looksLikeSqli(input) {
+        const value = String(input || '').toLowerCase();
+        return (
+          value.includes('union select') ||
+          value.includes('sleep(') ||
+          value.includes('waitfor delay') ||
+          value.includes('extractvalue(') ||
+          value.includes('information_schema') ||
+          (value.includes('--') && value.includes("'"))
+        );
+      }
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const body = new URLSearchParams({ email, password });
+
+        if (!looksLikeSqli(email) && !looksLikeSqli(password)) {
+          status.style.display = 'block';
+          status.textContent = 'Acceso denegado. Prueba un payload SQLi menos obvio que OR 1=1.';
+          return;
+        }
+
+        fetch('/api/ctf/nivel3/sqli', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            status.style.display = 'block';
+            if (data.solved && data.flag) {
+              status.innerHTML = data.message + ' Flag: <span class="flag">' + data.flag + '</span>';
+              return;
+            }
+
+            status.textContent = data.message || 'Acceso denegado.';
+          })
+          .catch(() => {
+            status.style.display = 'block';
+            status.textContent = 'Error al validar payload.';
+          });
+      });
+    })();
+  </script>
+  <script src="/public/lab-extras.js"></script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+[Internal Note]
+No confiar en formularios sensibles sin token anti-CSRF.
+Si una accion critica se ejecuta sin confirmar origen, un tercero puede forzarla.

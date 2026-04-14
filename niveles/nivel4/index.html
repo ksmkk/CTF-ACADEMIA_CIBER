@@ -8,17 +8,27 @@
 </head>
 <body>
   <main class="container">
-    <h1>Nivel 4: Nada llega completo</h1>
+    <h1>Nivel 4: DOM XSS</h1>
 
     <div class="box">
-      <p>Fragmento 1: <span class="flag">ACADEMIA{une_</span></p>
-      <p class="clue">Pista visible: el resto esta en un recurso del mismo nivel.</p>
-      <p class="mini-tip">Mini ayuda: busca carpetas como /recursos/ dentro de este nivel.</p>
+      <p>Aqui un texto del usuario puede convertirse en codigo en el navegador.</p>
+      <p class="clue">Necesitas hacer una prueba XSS sencilla.</p>
+      <p class="mini-tip">Pista: prueba una etiqueta con onerror y luego verifica.</p>
+      <p><a href="/nivel4/reviews.html">Ir a reseñas vulnerables</a></p>
+    </div>
+
+    <div class="box hint-panel">
+      <h4>Pistas por tiempo</h4>
+      <ul class="timed-hints">
+        <li class="hint-item" data-hint-delay="120000">2min: escribe algo y mira como se muestra.</li>
+        <li class="hint-item" data-hint-delay="300000">5min: intenta que ese texto ejecute una accion.</li>
+        <li class="hint-item" data-hint-delay="480000">8min: cuando funcione, usa el boton de verificar para sacar la flag.</li>
+      </ul>
     </div>
 
     <div class="box">
       <h2>Validar flag y desbloquear</h2>
-      <p>Une los fragmentos y valida para abrir el nivel 5.</p>
+      <p>Consigue la flag mediante DOM XSS y valida para abrir el nivel 5.</p>
       <form class="unlock" method="POST" action="/validar">
         <input type="hidden" name="nivel" value="4">
         <label for="flag4">Flag del nivel 4</label>
@@ -30,6 +40,7 @@
     <p><a href="/">Volver al inicio</a></p>
   </main>
 
-  <!-- Ayuda extra: revisa /nivel4/recursos/fragmento.txt -->
+  <script src="/public/timed-hints.js"></script>
+  <script src="/public/lab-extras.js"></script>
 </body>
 </html>

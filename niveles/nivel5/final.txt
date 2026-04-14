@@ -1,1 +1,2 @@
-Flag final: ACADEMIA{ctf_completado}
+Recurso legacy.
+La flag final ahora se obtiene desde una orden interna no autorizada.

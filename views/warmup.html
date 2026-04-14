@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warm-up Challenges</title>
+  <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+  <main class="container">
+    <section class="hero box">
+      <div class="badge">Fase previa obligatoria</div>
+      <h1>Warm-up Challenges</h1>
+      <p>Dos mini-retos por tema para llegar con confianza al CTF principal.</p>
+      <p class="mini-tip">Cada nivel tiene su formulario de flag. Completa uno y se desbloquea el siguiente.</p>
+    </section>
+
+    <section class="box">
+      <h2>Estado Warm-up</h2>
+      <div class="stats">
+        <article class="stat-card">
+          <span class="stat-label">Desbloqueado</span>
+          <strong id="warmupUnlocked" class="stat-value">1</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Total</span>
+          <strong id="warmupTotal" class="stat-value">10</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Estado</span>
+          <strong id="warmupState" class="stat-value">En curso</strong>
+        </article>
+      </div>
+    </section>
+
+    <section id="warmupGrid" class="level-grid"></section>
+
+    <section class="box">
+      <p><a href="/">Volver al inicio</a></p>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      fetch('/api/warmup/sections')
+        .then((res) => res.json())
+        .then(({ unlocked, total, completed, sections }) => {
+          document.getElementById('warmupUnlocked').textContent = String(Math.min(unlocked, total));
+          document.getElementById('warmupTotal').textContent = String(total);
+          document.getElementById('warmupState').textContent = completed ? 'Completo' : 'En curso';
+
+          const grid = document.getElementById('warmupGrid');
+          grid.innerHTML = sections
+            .map((section) => {
+              const locked = !section.available;
+              const status = locked ? 'Bloqueado' : (section.completed ? 'Completado' : 'Disponible');
+              const cta = locked ? '/warmup/' : ('/warmup/' + section.slug + '/');
+
+              return [
+                '<article class="box level-card ' + (locked ? 'locked' : 'open') + '">',
+                '<div class="level-top">',
+                '<span class="level-id">' + section.title + '</span>',
+                '<span class="level-state">' + status + '</span>',
+                '</div>',
+                '<h3>' + section.title + ' | 2 mini-retos</h3>',
+                '<p>Incluye nivel A y nivel B, con pistas simples y formulario para validar.</p>',
+                '<a class="btn ' + (locked ? 'btn-disabled' : '') + '" href="' + cta + '" ' + (locked ? 'tabindex="-1" aria-disabled="true"' : '') + '>Entrar</a>',
+                '</article>'
+              ].join('');
+            })
+            .join('');
+        })
+        .catch(() => {
+          document.getElementById('warmupGrid').innerHTML = '<article class="box warning"><p>No se pudo cargar el estado del Warm-up.</p></article>';
+        });
+    })();
+  </script>
+  <script src="/public/timed-hints.js"></script>
+  <script src="/public/lab-extras.js"></script>
+</body>
+</html>

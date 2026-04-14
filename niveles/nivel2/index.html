@@ -8,12 +8,22 @@
 </head>
 <body>
   <main class="container">
-    <h1>Nivel 2: No todas las puertas tienen cartel</h1>
+    <h1>Nivel 2: Login vulnerable (sin rate limit)</h1>
 
     <div class="box">
-      <p>Hay puertas que existen aunque nadie las anuncie.</p>
-      <p class="clue">Pista visible: piensa en nombres clasicos para carpetas escondidas.</p>
-      <p class="mini-tip">Mini ayuda: prueba explorar subrutas dentro de /nivel2/.</p>
+      <p>Este login permite muchos intentos sin bloquear la cuenta.</p>
+      <p class="clue">Tu objetivo es entrar usando un PIN facil.</p>
+      <p class="mini-tip">Puedes probar manualmente o con una herramienta de apoyo.</p>
+      <p><a href="/nivel2/pin-login.html">Ir al panel de PIN vulnerable</a></p>
+    </div>
+
+    <div class="box hint-panel">
+      <h4>Pistas por tiempo</h4>
+      <ul class="timed-hints">
+        <li class="hint-item" data-hint-delay="120000">2min: prueba varios PIN y mira si bloquea.</li>
+        <li class="hint-item" data-hint-delay="300000">5min: revisa la carpeta de ayuda del nivel.</li>
+        <li class="hint-item" data-hint-delay="480000">8min: cuando aciertes el PIN, aparecera la flag.</li>
+      </ul>
     </div>
 
     <div class="box">
@@ -30,6 +40,7 @@
     <p><a href="/">Volver al inicio</a></p>
   </main>
 
-  <!-- Ayuda extra: prueba dentro de /nivel2/oculto/ y mira si hay un txt. -->
+  <script src="/public/timed-hints.js"></script>
+  <script src="/public/lab-extras.js"></script>
 </body>
 </html>

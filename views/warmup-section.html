@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warm-up por vulnerabilidad</title>
+  <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+  <main class="container">
+    <section class="hero box">
+      <div class="badge">Warm-up por subruta</div>
+      <h1 id="sectionTitle">Warm-up</h1>
+      <p id="sectionIntro">Dos mini-retos para entender este tema paso a paso.</p>
+    </section>
+
+    <section id="sectionLevels" class="level-grid"></section>
+
+    <section class="box">
+      <p><a href="/warmup/">Volver a Warm-up Challenges</a></p>
+      <p><a href="/">Volver al inicio</a></p>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const slug = window.location.pathname.split('/').filter(Boolean).pop();
+
+      fetch('/api/warmup/section/' + encodeURIComponent(slug))
+        .then((res) => {
+          if (!res.ok) throw new Error('Seccion no encontrada');
+          return res.json();
+        })
+        .then((payload) => {
+          const section = payload.section;
+          document.getElementById('sectionTitle').textContent = section.title;
+          document.getElementById('sectionIntro').textContent = section.intro;
+
+          const grid = document.getElementById('sectionLevels');
+          grid.innerHTML = section.levels
+            .map((item) => {
+              const locked = item.locked;
+              const status = item.status || 'Disponible';
+              const openText = item.open || 'Lee el ejercicio de esta tarjeta.';
+              const observeText = item.observe || 'Identifica la idea principal del reto.';
+              const deliverText = item.deliver || 'Responde y valida la flag en el formulario.';
+              const challengeText = item.challenge || 'Lee la guia y responde una palabra clave del tema.';
+              const sampleAnswerText = item.sampleAnswer || 'revisa pistas';
+              const hints = Array.isArray(item.hints) ? item.hints : [];
+              const hint1 = hints[0] || 'Lee la guia rapida de nuevo.';
+              const hint2 = hints[1] || 'Sigue el paso a paso de la tarjeta.';
+              const hint3 = hints[2] || 'Completa el mini ejercicio para obtener la flag.';
+              const safeSteps = Array.isArray(item.steps) && item.steps.length
+                ? item.steps
+                : ['Lee la guia rapida.', 'Responde el mini ejercicio.', 'Valida la flag en el formulario.'];
+              const steps = safeSteps.map((step) => '<li>' + step + '</li>').join('');
+
+              return [
+                '<article class="box level-card ' + (locked ? 'locked' : 'open') + '">',
+                '<div class="level-top">',
+                '<span class="level-id">Warm-up ' + item.id + '</span>',
+                '<span class="level-state">' + status + '</span>',
+                '</div>',
+                '<h3>' + item.title + '</h3>',
+                '<p>' + item.objective + '</p>',
+                '<div class="box hint-panel">',
+                '<h4>Guia rapida</h4>',
+                '<ul class="timed-hints">',
+                '<li><strong>Que deben abrir:</strong> ' + openText + '</li>',
+                '<li><strong>Que deben observar:</strong> ' + observeText + '</li>',
+                '<li><strong>Que deben entregar:</strong> ' + deliverText + '</li>',
+                '</ul>',
+                '</div>',
+                '<div class="box hint-panel">',
+                '<h4>Mini ejercicio</h4>',
+                '<p>' + challengeText + '</p>',
+                '<p class="mini-tip"><strong>Respuesta esperada (modo practica):</strong> ' + sampleAnswerText + '</p>',
+                '<form class="unlock mini-solve" data-level-id="' + item.id + '">',
+                '<label for="answer-w-' + item.id + '">Tu respuesta</label>',
+                '<input id="answer-w-' + item.id + '" name="answer" autocomplete="off" placeholder="Escribe una palabra" ' + (locked ? 'disabled' : '') + ' required>',
+                '<button type="submit" ' + (locked ? 'disabled' : '') + '>Comprobar respuesta</button>',
+                '</form>',
+                '<p id="solve-out-' + item.id + '" class="mini-tip" style="display:none;"></p>',
+                '</div>',
+                '<div class="box hint-panel">',
+                '<h4>Que hacer (paso a paso)</h4>',
+                '<ol class="timed-hints">',
+                steps,
+                '</ol>',
+                '</div>',
+                '<div class="box hint-panel">',
+                '<h4>Pistas por tiempo</h4>',
+                '<ul class="timed-hints">',
+                '<li class="hint-item" data-hint-delay="120000">2min: ' + hint1 + '</li>',
+                '<li class="hint-item" data-hint-delay="300000">5min: ' + hint2 + '</li>',
+                '<li class="hint-item" data-hint-delay="480000">8min: ' + hint3 + '</li>',
+                '</ul>',
+                '</div>',
+                '<p class="mini-tip">Escribe la flag en el formulario de abajo para continuar.</p>',
+                '<form class="unlock" method="POST" action="/warmup/validar">',
+                '<input type="hidden" name="nivel" value="' + item.id + '">',
+                '<label for="flag-w-' + item.id + '">Flag Warm-up ' + item.id + '</label>',
+                '<input id="flag-w-' + item.id + '" name="flag" autocomplete="off" placeholder="WARMUP{...}" ' + (locked ? 'disabled' : '') + ' required>',
+                '<button type="submit" ' + (locked ? 'disabled' : '') + '>Validar</button>',
+                '</form>',
+                '</article>'
+              ].join('');
+            })
+            .join('');
+
+          document.querySelectorAll('.mini-solve').forEach((form) => {
+            form.addEventListener('submit', (event) => {
+              event.preventDefault();
+              const levelId = form.getAttribute('data-level-id');
+              const input = form.querySelector('input[name="answer"]');
+              const out = document.getElementById('solve-out-' + levelId);
+
+              const body = new URLSearchParams({
+                levelId: String(levelId),
+                answer: input ? input.value : ''
+              });
+
+              fetch('/api/warmup/solve', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body
+              })
+                .then((res) => res.json())
+                .then((data) => {
+                  out.style.display = 'block';
+                  if (data.solved && data.flag) {
+                    out.innerHTML = data.message + ' <span class="flag">' + data.flag + '</span>';
+                    return;
+                  }
+
+                  out.textContent = data.message || 'No se pudo validar la respuesta.';
+                })
+                .catch(() => {
+                  out.style.display = 'block';
+                  out.textContent = 'Error de conexion al comprobar respuesta.';
+                });
+            });
+          });
+        })
+        .catch(() => {
+          document.getElementById('sectionLevels').innerHTML = '<article class="box warning"><p>No se pudo cargar esta seccion. Vuelve al panel Warm-up.</p></article>';
+        });
+    })();
+  </script>
+  <script src="/public/timed-hints.js"></script>
+  <script src="/public/lab-extras.js"></script>
+</body>
+</html>

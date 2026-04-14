@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nivel 5 | IDOR + Burp Suite</title>
+  <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Nivel 5: IDOR + Burp Suite</h1>
+
+    <div class="box">
+      <p>Modulo de ordenes vulnerable por referencia directa de objeto.</p>
+      <p class="clue">La app carga ordenes por parametro orderId sin verificar propietario.</p>
+      <p class="mini-tip">Prueba cambiar manualmente ?orderId=1001, ?orderId=1002, ?orderId=1337</p>
+    </div>
+
+    <div class="box">
+      <h2>Detalle de orden</h2>
+      <div id="orderDetail"></div>
+    </div>
+
+    <p><a href="/nivel5/">Volver a nivel 5</a></p>
+  </main>
+
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const orderId = Number(params.get('orderId') || 1001);
+
+      fetch('/api/ctf/nivel5/orders?orderId=' + encodeURIComponent(String(orderId)))
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.ok || !data.order) {
+            document.getElementById('orderDetail').innerHTML = '<p>No se pudo cargar la orden.</p>';
+            return;
+          }
+
+          const order = data.order;
+          document.getElementById('orderDetail').innerHTML = [
+            '<p><strong>orderId:</strong> ' + data.orderId + '</p>',
+            '<p><strong>owner:</strong> ' + order.owner + '</p>',
+            '<p><strong>total:</strong> ' + order.total + '</p>',
+            '<p><strong>status:</strong> ' + order.status + '</p>',
+            '<p><strong>note:</strong> ' + order.note + '</p>'
+          ].join('');
+        })
+        .catch(() => {
+          document.getElementById('orderDetail').innerHTML = '<p>No se pudo cargar la orden.</p>';
+        });
+    })();
+  </script>
+  <script src="/public/lab-extras.js"></script>
+</body>
+</html>

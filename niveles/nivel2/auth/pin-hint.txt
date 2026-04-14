@@ -1,0 +1,2 @@
+Sistema legacy detectado.
+PIN por defecto del supervisor: 0000

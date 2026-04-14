@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nivel 2 | PIN Debil</title>
+  <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Nivel 2: Autenticacion Debil</h1>
+
+    <div class="box">
+      <p>Panel interno protegido solo por PIN de 4 digitos.</p>
+      <p class="clue">Una configuracion insegura mantiene PIN por defecto en produccion.</p>
+      <p class="mini-tip">Pista: revisa archivos de soporte del modulo auth.</p>
+    </div>
+
+    <div class="box">
+      <h2>Ingreso por PIN</h2>
+      <form id="pinForm" class="unlock">
+        <label for="pin">PIN</label>
+        <input id="pin" type="text" maxlength="4" placeholder="0000" autocomplete="off" required>
+        <button type="submit">Validar PIN</button>
+      </form>
+      <p id="status" class="mini-tip" style="display:none;"></p>
+    </div>
+
+    <p><a href="/nivel2/">Volver a nivel 2</a></p>
+  </main>
+
+  <script>
+    (function () {
+      const form = document.getElementById('pinForm');
+      const status = document.getElementById('status');
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const pin = document.getElementById('pin').value.trim();
+        const body = new URLSearchParams({ pin });
+
+        fetch('/api/ctf/nivel2/pin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            status.style.display = 'block';
+            if (data.solved && data.flag) {
+              status.innerHTML = data.message + ' Flag: <span class="flag">' + data.flag + '</span>';
+              return;
+            }
+
+            status.textContent = data.message || 'No fue posible validar el PIN.';
+          })
+          .catch(() => {
+            status.style.display = 'block';
+            status.textContent = 'Error de conexion al validar PIN.';
+          });
+      });
+    })();
+  </script>
+  <script src="/public/lab-extras.js"></script>
+</body>
+</html>

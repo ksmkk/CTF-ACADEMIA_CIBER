@@ -8,20 +8,28 @@
 </head>
 <body>
   <main class="container">
-    <h1>Nivel 5: La ultima llave</h1>
+    <h1>Nivel 5: IDOR con Burp Suite</h1>
 
     <div class="box">
-      <p>Has llegado lejos.</p>
-      <p>La ultima bandera no esta en un comentario.</p>
-      <p>No esta en un script.</p>
-      <p>No esta dividida.</p>
-      <p class="clue">Esta donde suelen terminar las historias.</p>
-      <p class="mini-tip">Mini ayuda: piensa en un nombre de archivo final y simple.</p>
+      <p>Reto final: cambiando un numero en la URL puedes ver datos que no te pertenecen.</p>
+      <p>Tu meta es encontrar una orden interna.</p>
+      <p class="clue">Prueba varios valores del parametro orderId.</p>
+      <p class="mini-tip">Puedes hacerlo manual o con Burp Repeater.</p>
+      <p><a href="/nivel5/orders.html?orderId=1001">Ir a ordenes vulnerables</a></p>
+    </div>
+
+    <div class="box hint-panel">
+      <h4>Pistas por tiempo</h4>
+      <ul class="timed-hints">
+        <li class="hint-item" data-hint-delay="120000">2min: cambia el numero del orderId.</li>
+        <li class="hint-item" data-hint-delay="300000">5min: busca una respuesta distinta a las normales.</li>
+        <li class="hint-item" data-hint-delay="480000">8min: cuando encuentres la orden interna, obtendras la referencia final.</li>
+      </ul>
     </div>
 
     <div class="box">
       <h2>Cierre del CTF</h2>
-      <p>Cuando tengas la bandera final, validala para cerrar la mision.</p>
+      <p>Busca la flag en la orden interna y validala para cerrar la mision.</p>
       <form class="unlock" method="POST" action="/validar">
         <input type="hidden" name="nivel" value="5">
         <label for="flag5">Flag final</label>
@@ -32,5 +40,7 @@
 
     <p><a href="/">Volver al inicio</a></p>
   </main>
+  <script src="/public/timed-hints.js"></script>
+  <script src="/public/lab-extras.js"></script>
 </body>
 </html>

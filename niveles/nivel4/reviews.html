@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nivel 4 | DOM XSS</title>
+  <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Nivel 4: DOM XSS en Reseñas</h1>
+
+    <div class="box">
+      <p>Vista de reseñas renderizada en cliente sin sanitizacion.</p>
+      <p class="clue">Si el parametro review se inyecta directo en innerHTML, puedes ejecutar JS.</p>
+      <p class="mini-tip">Ejemplo de idea: payload con img onerror para setear window.__xssDone=true.</p>
+    </div>
+
+    <div class="box">
+      <h2>Previsualizacion vulnerable</h2>
+      <form id="reviewForm" class="unlock">
+        <label for="review">Review</label>
+        <input id="review" type="text" autocomplete="off" placeholder="Excelente producto" required>
+        <button type="submit">Previsualizar</button>
+      </form>
+      <button id="verifyXss" class="btn" type="button" style="margin-top:10px;">Verificar explotacion XSS</button>
+      <p id="preview"></p>
+      <p id="flagOut"></p>
+    </div>
+
+    <p><a href="/nivel4/">Volver a nivel 4</a></p>
+  </main>
+
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const review = params.get('review') || '';
+      const preview = document.getElementById('preview');
+      const flagOut = document.getElementById('flagOut');
+      const verifyXss = document.getElementById('verifyXss');
+
+      if (review) {
+        preview.innerHTML = 'Review recibida: ' + review;
+      }
+
+      verifyXss.addEventListener('click', () => {
+        const body = new URLSearchParams({ executed: String(window.__xssDone === true) });
+        fetch('/api/ctf/nivel4/xss-check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.solved && data.flag) {
+              flagOut.innerHTML = data.message + ' Flag: <span class="flag">' + data.flag + '</span>';
+              return;
+            }
+
+            flagOut.textContent = data.message || 'Aun no se detecta ejecucion XSS.';
+          })
+          .catch(() => {
+            flagOut.textContent = 'No fue posible validar la prueba XSS.';
+          });
+      });
+
+      document.getElementById('reviewForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const value = document.getElementById('review').value;
+        window.location.search = '?review=' + encodeURIComponent(value);
+      });
+    })();
+  </script>
+  <script src="/public/lab-extras.js"></script>
+</body>
+</html>
