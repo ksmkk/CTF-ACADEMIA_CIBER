@@ -23,8 +23,40 @@
     </section>
 
     <section class="box">
+      <h2>Desafio CTF Academico</h2>
+      <p>Este laboratorio fue construido de forma intencionalmente vulnerable con fines educativos. No usar tecnicas de este entorno fuera del contexto de clase.</p>
+      <p class="mini-tip"><strong>Formato de flag:</strong> ACADEMIA{...} en CTF principal y WARMUP{...} en fase previa.</p>
+    </section>
+
+    <section class="box">
+      <h2>Mapa de Vulnerabilidades</h2>
+      <div class="category-grid">
+        <article class="category-card">
+          <h3>A01: Broken Access Control</h3>
+          <ul>
+            <li>Nivel 1: CSRF Attack</li>
+            <li>Nivel 2: Login Debil</li>
+            <li>Nivel 5: IDOR con Burp Suite</li>
+          </ul>
+        </article>
+        <article class="category-card">
+          <h3>A03: Injection</h3>
+          <ul>
+            <li>Nivel 3: SQL Injection no trivial</li>
+          </ul>
+        </article>
+        <article class="category-card">
+          <h3>A07: XSS</h3>
+          <ul>
+            <li>Nivel 4: Cross-Site Scripting (DOM)</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="box">
       <h2>Fase 1: Warm-up Challenges (obligatoria)</h2>
-      <p>Contiene <strong>10 mini-niveles</strong>: 2 por cada vulnerabilidad del CTF final.</p>
+      <p>Contiene <strong>8 mini-niveles</strong>: 2 por cada vulnerabilidad del CTF final.</p>
       <p>Al terminar esta fase, se habilita automaticamente el CTF principal de 5 niveles.</p>
       <div class="stats">
         <article class="stat-card">
@@ -33,7 +65,7 @@
         </article>
         <article class="stat-card">
           <span class="stat-label">Warm-up total</span>
-          <strong id="warmupTotal" class="stat-value">10</strong>
+          <strong id="warmupTotal" class="stat-value">8</strong>
         </article>
         <article class="stat-card">
           <span class="stat-label">Estado Warm-up</span>

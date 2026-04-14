@@ -158,18 +158,18 @@ const WARMUP_SECTIONS = [
         open: 'Lee el mini ejercicio de esta tarjeta.',
         observe: 'Que innerHTML interpreta etiquetas en vez de mostrarlas como texto.',
         deliver: 'Escribe la respuesta, comprueba y valida la flag.',
-        challenge: '¿Que propiedad del DOM es riesgosa cuando se usa con entrada de usuario?',
-        sampleAnswer: 'innerhtml',
-        answer: 'innerhtml',
+        challenge: '¿Que tipo de XSS se ejecuta cuando inyectas codigo en la URL y aparece directamente en la pagina?',
+        sampleAnswer: 'reflected',
+        answer: 'reflected',
         steps: [
           'Lee la diferencia entre texto y HTML interpretado.',
           'Responde el mini ejercicio.',
           'Valida la flag obtenida.'
         ],
         hints: [
-          'Empieza con "inner".',
-          'Termina con "html".',
-          'Se usa mucho en ejemplos de XSS DOM.'
+          'La palabra es "Reflected".',
+          'Completa: XSS ________.',
+          'Mira el titulo del mini desafio.'
         ]
       },
       {
@@ -179,67 +179,18 @@ const WARMUP_SECTIONS = [
         open: 'Lee la pregunta del mini ejercicio.',
         observe: 'Que ciertos eventos HTML pueden ejecutar codigo.',
         deliver: 'Responde, comprueba y valida la flag.',
-        challenge: '¿Que evento se usa mucho para pruebas XSS en imagen rota?',
-        sampleAnswer: 'onerror',
-        answer: 'onerror',
+        challenge: '¿Cual es el tipo de XSS donde el navegador ejecuta codigo malicioso sin que el servidor participe?',
+        sampleAnswer: 'dom-based',
+        answer: 'dom-based',
         steps: [
           'Lee el ejemplo de evento comun.',
           'Responde el mini ejercicio.',
           'Valida la flag para continuar.'
         ],
         hints: [
-          'Empieza con "on".',
-          'Se activa cuando una imagen falla.',
-          'Es uno de los eventos mas usados en demos XSS.'
-        ]
-      }
-    ]
-  },
-  {
-    slug: 'idor',
-    title: 'IDOR + Burp Suite',
-    intro: 'Aprende como cambiar un ID puede mostrar datos de otro usuario.',
-    levels: [
-      {
-        id: 9,
-        title: 'Nivel A: cambiar ID',
-        objective: 'Encontrar datos ajenos cambiando el valor de un ID.',
-        open: 'Lee la pregunta del mini ejercicio.',
-        observe: 'Que cambiar un ID puede mostrar datos de otra persona.',
-        deliver: 'Escribe la respuesta, comprueba y valida la flag.',
-        challenge: '¿Como se llama la vulnerabilidad de cambiar un ID y ver datos ajenos?',
-        sampleAnswer: 'idor',
-        answer: 'idor',
-        steps: [
-          'Lee el escenario de cambio de ID.',
-          'Responde el mini ejercicio.',
-          'Valida la flag para pasar al ultimo nivel.'
-        ],
-        hints: [
-          'Tiene 4 letras.',
-          'Empieza con i.',
-          'Es muy comun en APIs con ids consecutivos.'
-        ]
-      },
-      {
-        id: 10,
-        title: 'Nivel B: cierre warm-up',
-        objective: 'Confirmar que falta validar propiedad del recurso.',
-        open: 'Lee la pregunta del mini ejercicio final.',
-        observe: 'Que no basta autenticar: tambien hay que validar permisos.',
-        deliver: 'Responde, comprueba y valida la ultima flag warm-up.',
-        challenge: 'Completa la frase: autenticacion + ________ por recurso.',
-        sampleAnswer: 'autorizacion',
-        answer: 'autorizacion',
-        steps: [
-          'Lee la diferencia entre autenticar y autorizar.',
-          'Responde el mini ejercicio.',
-          'Valida la flag para desbloquear el CTF principal.'
-        ],
-        hints: [
-          'La palabra empieza con "auto".',
-          'No es autenticacion.',
-          'Define que SI puedes hacer con tu cuenta.'
+          'Empieza con "DOM".',
+          'Completa: DOM-________.',
+          'Mira el titulo del mini desafio.'
         ]
       }
     ]

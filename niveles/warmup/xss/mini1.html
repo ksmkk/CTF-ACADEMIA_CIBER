@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warmup - XSS Mini 1</title>
+  <link rel="stylesheet" href="/public/styles.css">
+  <style>
+    .demo-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    @media (max-width: 768px) {
+      .demo-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    .xss-section {
+      padding: 15px;
+      border-left: 4px solid #e74c3c;
+      background: rgba(20, 14, 9, 0.75);
+    }
+    .xss-section h3 {
+      margin-top: 0;
+      color: #e74c3c;
+    }
+    .code-box {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 15px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+      overflow-x: auto;
+      margin: 10px 0;
+      line-height: 1.4;
+    }
+    .form-demo {
+      background: rgba(20, 14, 9, 0.75);
+      padding: 15px;
+      border-radius: 4px;
+      margin: 10px 0;
+      border: 1px solid rgba(255, 154, 60, 0.28);
+    }
+    .form-demo input,
+    .form-demo textarea,
+    .form-demo button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .form-demo input,
+    .form-demo textarea {
+      border: 1px solid rgba(255, 154, 60, 0.38);
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    .form-demo button {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .form-demo button:hover {
+      background: #c0392b;
+    }
+    .status-box {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      background: #fffacd;
+      border-left: 4px solid #ffd700;
+      color: #2f2a00;
+      font-weight: 700;
+    }
+    .status-box.success {
+      background: #d4edda;
+      border-left-color: #28a745;
+      color: #0f5132;
+    }
+    .preview-box {
+      background: rgba(20, 14, 9, 0.75);
+      padding: 15px;
+      border: 1px solid rgba(255, 154, 60, 0.28);
+      border-radius: 4px;
+      margin: 10px 0;
+      min-height: 50px;
+    }
+    .alert-demo {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      color: #856404;
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+      /* warmup dark patch */
+    .demo-container > div,
+    .comparison > div {
+      border: 1px solid rgba(255, 154, 60, 0.28);
+      border-radius: 8px;
+    }
+    .form-demo input,
+    .form-demo textarea,
+    .form-demo select {
+      background: rgba(10, 7, 4, 0.86);
+      color: #f6f2e6;
+      border: 1px solid rgba(255, 154, 60, 0.38);
+    }
+    .form-demo input::placeholder,
+    .form-demo textarea::placeholder {
+      color: #b6aa93;
+      opacity: 1;
+    }
+    .form-demo small,
+    .token-note {
+      color: #d8cab5;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero box" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white;">
+      <div class="badge" style="background: rgba(255,255,255,0.3);">Warmup | Nivel A</div>
+      <h1>XSS (Cross-Site Scripting) - Mini Desafio 1</h1>
+      <p>Reflected XSS</p>
+    </section>
+
+    <section class="box">
+      <h2>Objetivo</h2>
+      <p>
+        Descubre cómo código malicioso puede ejecutarse en el navegador del usuario. 
+        Observa cómo un campo de búsqueda sin validación puede ser peligroso.
+      </p>
+    </section>
+
+    <section class="box">
+      <h2>Informacion: XSS (Cross-Site Scripting)</h2>
+      <p>
+        <strong>XSS</strong> ocurre cuando un atacante inyecta código JavaScript en una página web.
+        El navegador ejecuta ese código como si fuera parte de la página legítima.
+      </p>
+      <ul>
+        <li>El atacante inyecta: <code>&lt;script&gt;alert('Hackeado!')&lt;/script&gt;</code></li>
+        <li>El servidor renderiza el HTML sin validar</li>
+        <li>El navegador ejecuta el script automáticamente</li>
+        <li>El usuario ve una alerta (o peor, pierde sus datos)</li>
+      </ul>
+      <p class="mini-tip">
+        <strong>Peligro:</strong> En un ataque XSS real, el atacante puede robar cookies, sesiones, contraseñas, 
+        o realizar acciones en nombre del usuario.
+      </p>
+    </section>
+
+    <section class="box">
+      <h2>Comparativa: Busqueda Vulnerable</h2>
+      
+      <div class="demo-container">
+        <div class="xss-section">
+          <h3>❌ Sin Validación (Vulnerable)</h3>
+          <p>El servidor muestra EXACTAMENTE lo que escribiste:</p>
+          <form class="form-demo" onsubmit="handleVulnerable(event)">
+            <input 
+              type="text" 
+              id="search1"
+              placeholder="Buscar (intenta: &lt;img src=x onerror=alert('XSS')&gt;)"
+              required
+            >
+            <small style="color: #d8cab5;">El servidor renderiza sin filtrar HTML</small>
+            <button type="submit">Buscar</button>
+          </form>
+          <p style="font-weight: bold;">Resultado de búsqueda:</p>
+          <div id="result1" class="preview-box">
+            Aquí aparecerá lo que escribiste...
+          </div>
+          <div id="status1" class="status-box" style="display:none;"></div>
+        </div>
+
+        <div class="xss-section">
+          <h3>✅ Con Sanitización (Seguro)</h3>
+          <p>El servidor escapa caracteres peligrosos:</p>
+          <form class="form-demo" onsubmit="handleSafe(event)">
+            <input 
+              type="text" 
+              id="search2"
+              placeholder="Buscar lo que quieras (está protegido)"
+              required
+            >
+            <small style="color: #d8cab5;">El servidor convierte &lt; a &amp;lt; etc.</small>
+            <button type="submit">Buscar</button>
+          </form>
+          <p style="font-weight: bold;">Resultado de búsqueda:</p>
+          <div id="result2" class="preview-box">
+            Aquí aparecerá tu búsqueda sin ejecutar nada...
+          </div>
+          <div id="status2" class="status-box" style="display:none;"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="box">
+      <h2>Ejemplos de Payloads XSS</h2>
+      <div class="code-box">
+&lt;<span style="color: #a6e22e;">script</span>&gt;alert(<span style="color: #e6db74;">'XSS'</span>)&lt;/<span style="color: #a6e22e;">script</span>&gt;<br><br>
+&lt;<span style="color: #a6e22e;">img</span> src=x <span style="color: #a1efe4;">onerror</span>=<span style="color: #e6db74;">"alert('XSS')"</span>&gt;<br><br>
+&lt;<span style="color: #a6e22e;">svg</span> <span style="color: #a1efe4;">onload</span>=<span style="color: #e6db74;">"alert('XSS')"</span>&gt;&lt;/<span style="color: #a6e22e;">svg</span>&gt;
+      </div>
+    </section>
+
+    <section class="box">
+      <h2>✍️ Validar Conocimiento</h2>
+      <p><strong>¿Qué tipo de XSS se ejecuta cuando inyectas código en la URL y aparece directamente en la página?</strong></p>
+      <form method="POST" action="/api/warmup/validate" class="form-demo">
+        <input type="hidden" name="section" value="xss">
+        <input type="hidden" name="mini" value="1">
+        <input 
+          type="text" 
+          name="answer" 
+          placeholder="Respuesta (mirar el title de esta sección)" 
+          required
+          autocomplete="off"
+        >
+        <button type="submit">Comprobar Respuesta</button>
+      </form>
+      <div id="responseStatus" class="status-box" style="display:none;"></div>
+    </section>
+
+    <section class="box">
+      <h2>Pistas</h2>
+      <ul class="timed-hints">
+        <li class="hint-item" data-hint-delay="120000">2 min: La palabra es "Reflected".</li>
+        <li class="hint-item" data-hint-delay="240000">4 min: XSS __________</li>
+        <li class="hint-item" data-hint-delay="360000">6 min: Vuelve a mirar el título de esta sección.</li>
+      </ul>
+    </section>
+
+    
+    <section class="box">
+      <h2>Validar Flag y Avanzar</h2>
+      <p>Pega la flag obtenida para desbloquear el siguiente mini desafio.</p>
+      <form class="unlock" method="POST" action="/warmup/validar">
+        <input type="hidden" name="nivel" value="7">
+        <label for="flag-w-7">Flag warm-up 7</label>
+        <input id="flag-w-7" name="flag" autocomplete="off" placeholder="WARMUP{...}" required>
+        <button type="submit">Validar flag</button>
+      </form>
+    </section>
+
+    <section class="box">
+      <p><a href="/warmup/">Volver a Warmup</a></p>
+    </section>
+  </main>
+
+  <script>
+    function handleVulnerable(e) {
+      e.preventDefault();
+      const query = document.getElementById('search1').value;
+      const result = document.getElementById('result1');
+      
+      // VULNERABLE: renderiza sin escapar
+      result.innerHTML = `<strong>Resultados para "${query}":</strong><br>No se encontraron resultados exactos, pero tu búsqueda contiene: ${query}`;
+      
+      const status = document.getElementById('status1');
+      if (query.includes('<') && query.includes('>')) {
+        status.textContent = '⚠️ ¡XSS Exitosa! El código fue ejecutado. En un sitio real, el atacante podría robar tu sesión.';
+        status.classList.remove('success');
+      } else {
+        status.textContent = '✓ Búsqueda completada (intenta inyectar: &lt;img src=x onerror=alert("XSS")&gt;)';
+        status.classList.add('success');
+      }
+      status.style.display = 'block';
+    }
+
+    function handleSafe(e) {
+      e.preventDefault();
+      const query = document.getElementById('search2').value;
+      const result = document.getElementById('result2');
+      
+      // SEGURO: escapa caracteres especiales
+      const escaped = document.createElement('div');
+      escaped.textContent = query;
+      const safeContent = escaped.innerHTML;
+      
+      result.innerHTML = `<strong>Resultados para "${safeContent}":</strong><br>No se encontraron resultados exactos.`;
+      
+      const status = document.getElementById('status2');
+      status.textContent = '✅ Búsqueda completada de forma segura. El HTML fue escapado correctamente.';
+      status.classList.add('success');
+      status.style.display = 'block';
+    }
+
+    document.querySelector('form[action="/api/warmup/validate"]').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const response = await fetch('/api/warmup/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.fromEntries(formData))
+      });
+      const data = await response.json();
+      const status = document.getElementById('responseStatus');
+      if (data.ok) {
+        status.textContent = '✅ ¡Correcto! Flag: ' + data.flag;
+        status.classList.add('success');
+      } else {
+        status.textContent = data.message ? ('Error: ' + data.message) : 'Error: respuesta incorrecta. Intenta de nuevo.';
+        status.classList.remove('success');
+      }
+      status.style.display = 'block';
+    });
+  </script>
+  <script src="/public/timed-hints.js"></script>
+  <script src="/public/lab-extras.js"></script>
+</body>
+</html>

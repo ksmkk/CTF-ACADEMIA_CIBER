@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warmup - Login Débil Mini 1</title>
+  <link rel="stylesheet" href="/public/styles.css">
+  <style>
+    .demo-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    @media (max-width: 768px) {
+      .demo-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    .login-section {
+      padding: 15px;
+      border-left: 4px solid #4ecdc4;
+      background: rgba(20, 14, 9, 0.75);
+    }
+    .login-section h3 {
+      margin-top: 0;
+      color: #4ecdc4;
+    }
+    .form-demo {
+      background: rgba(20, 14, 9, 0.75);
+      padding: 15px;
+      border-radius: 4px;
+      margin: 10px 0;
+      border: 1px solid rgba(255, 154, 60, 0.28);
+    }
+    .form-demo input,
+    .form-demo button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .form-demo input {
+      border: 1px solid rgba(255, 154, 60, 0.38);
+      border-radius: 4px;
+    }
+    .form-demo button {
+      background: #4ecdc4;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .form-demo button:hover {
+      background: #25bfaa;
+    }
+    .attempt-counter {
+      margin: 10px 0;
+      padding: 10px;
+      background: rgba(255, 216, 110, 0.2);
+      border-left: 4px solid #ffd86e;
+      border-radius: 4px;
+      font-weight: bold;
+      color: #ffeec1;
+    }
+    .status-box {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      background: #fffacd;
+      border-left: 4px solid #ffd700;
+      color: #2f2a00;
+      font-weight: 700;
+    }
+    .status-box.success {
+      background: #d4edda;
+      border-left-color: #28a745;
+      color: #0f5132;
+    }
+      /* warmup dark patch */
+    .demo-container > div,
+    .comparison > div {
+      border: 1px solid rgba(255, 154, 60, 0.28);
+      border-radius: 8px;
+    }
+    .form-demo input,
+    .form-demo textarea,
+    .form-demo select {
+      background: rgba(10, 7, 4, 0.86);
+      color: #f6f2e6;
+      border: 1px solid rgba(255, 154, 60, 0.38);
+    }
+    .form-demo input::placeholder,
+    .form-demo textarea::placeholder {
+      color: #b6aa93;
+      opacity: 1;
+    }
+    .form-demo small,
+    .token-note {
+      color: #d8cab5;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero box" style="background: linear-gradient(135deg, #4ecdc4 0%, #44b8a3 100%); color: white;">
+      <div class="badge" style="background: rgba(255,255,255,0.3);">Warmup | Nivel A</div>
+      <h1>Login Debil - Mini Desafio 1</h1>
+      <p>Muchos Intentos</p>
+    </section>
+
+    <section class="box">
+      <h2>Objetivo</h2>
+      <p>
+        Descubre como un login sin <strong>protección contra ataques de fuerza bruta</strong> 
+        es vulnerable. Observa cómo un sistema sin límite de intentos permite adivinar la contraseña.
+      </p>
+    </section>
+
+    <section class="box">
+      <h2>Informacion: Ataque de Fuerza Bruta</h2>
+      <p>
+        Un <strong>ataque de fuerza bruta (Brute Force)</strong> consiste en intentar adivinar 
+        una contraseña probando todas las combinaciones posibles.
+      </p>
+      <ul>
+        <li>El atacante prueba: "123456", "password", "admin", etc.</li>
+        <li>Sin límites, puede intentar miles de combinaciones rápidamente</li>
+        <li>Eventualmente, una combinación será correcta</li>
+      </ul>
+      <p class="mini-tip">
+        <strong>Proteccion:</strong> Los sistemas modernos limitan los intentos de login fallidos 
+        (Rate Limiting). Después de N intentos fallidos, bloquean la cuenta o piden esperar.
+      </p>
+    </section>
+
+    <section class="box">
+      <h2>Comparativa</h2>
+      
+      <div class="demo-container">
+        <div class="login-section">
+          <h3>❌ Sin Límite de Intentos</h3>
+          <p>Puedes intentar infinitas veces:</p>
+          <form class="form-demo" onsubmit="handleNoLimit(event)">
+            <input type="text" placeholder="Usuario" value="admin" readonly>
+            <input type="password" id="pwdNoLimit" placeholder="Contraseña" required>
+            <button type="submit">Intentar</button>
+          </form>
+          <div id="noLimitCounter" class="attempt-counter">Intentos: 0/∞</div>
+          <div id="noLimitStatus" class="status-box" style="display:none;"></div>
+        </div>
+
+        <div class="login-section">
+          <h3>✅ Con Límite de Intentos</h3>
+          <p>Bloqueado después de 3 intentos fallidos:</p>
+          <form class="form-demo" onsubmit="handleWithLimit(event)">
+            <input type="text" placeholder="Usuario" value="user" readonly>
+            <input type="password" id="pwdWithLimit" placeholder="Contraseña" required>
+            <button type="submit" id="limitBtn">Intentar</button>
+          </form>
+          <div id="limitCounter" class="attempt-counter">Intentos: 0/3</div>
+          <div id="limitStatus" class="status-box" style="display:none;"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="box">
+      <h2>Consejos para Probar</h2>
+      <p>
+        Intenta estas contraseñas en el formulario de la izquierda (sin límites):
+      </p>
+      <ul style="background: rgba(20, 14, 9, 0.75); border: 1px solid rgba(255, 154, 60, 0.28); padding: 15px; border-radius: 8px;">
+        <li><code>123456</code></li>
+        <li><code>password</code></li>
+        <li><code>admin123</code></li>
+        <li><code>qwerty</code></li>
+        <li><code>secret</code> ← La contraseña correcta está aquí</li>
+      </ul>
+    </section>
+
+    <section class="box">
+      <h2>✍️ Validar Conocimiento</h2>
+      <p><strong>¿Como se llama el control que limita intentos de login por tiempo?</strong></p>
+      <form method="POST" action="/api/warmup/validate" class="form-demo">
+        <input type="hidden" name="section" value="login">
+        <input type="hidden" name="mini" value="1">
+        <input 
+          type="text" 
+          name="answer" 
+          placeholder="Respuesta (2 palabras separadas por espacio)" 
+          required
+          autocomplete="off"
+        >
+        <button type="submit">Comprobar Respuesta</button>
+      </form>
+      <div id="responseStatus" class="status-box" style="display:none;"></div>
+    </section>
+
+    <section class="box">
+      <h2>Pistas</h2>
+      <ul class="timed-hints">
+        <li class="hint-item" data-hint-delay="120000">2 min: Son dos palabras: "___ ___"</li>
+        <li class="hint-item" data-hint-delay="240000">4 min: La primera palabra significa velocidad/rapidez.</li>
+        <li class="hint-item" data-hint-delay="360000">6 min: Es un "rate _____"</li>
+      </ul>
+    </section>
+
+    
+    <section class="box">
+      <h2>Validar Flag y Avanzar</h2>
+      <p>Pega la flag obtenida para desbloquear el siguiente mini desafio.</p>
+      <form class="unlock" method="POST" action="/warmup/validar">
+        <input type="hidden" name="nivel" value="3">
+        <label for="flag-w-3">Flag warm-up 3</label>
+        <input id="flag-w-3" name="flag" autocomplete="off" placeholder="WARMUP{...}" required>
+        <button type="submit">Validar flag</button>
+      </form>
+    </section>
+
+    <section class="box">
+      <p><a href="/warmup/">Volver a Warmup</a></p>
+    </section>
+  </main>
+
+  <script>
+    const correctPasswords = ['secret', 'admin123', 'password', '123456', 'qwerty'];
+    let noLimitAttempts = 0;
+    let withLimitAttempts = 0;
+    const MAX_ATTEMPTS = 3;
+
+    function handleNoLimit(e) {
+      e.preventDefault();
+      noLimitAttempts++;
+      const pwd = document.getElementById('pwdNoLimit').value;
+      const status = document.getElementById('noLimitStatus');
+      
+      document.getElementById('noLimitCounter').textContent = `Intentos: ${noLimitAttempts}/∞`;
+
+      if (pwd === 'secret') {
+        status.textContent = `✅ ¡Correcto! Contraseña acertada después de ${noLimitAttempts} intentos. Sin límite, el atacante puede seguir intentando indefinidamente.`;
+        status.classList.add('success');
+      } else {
+        status.textContent = `❌ Contraseña incorrecta. Intenta de nuevo sin limitación.`;
+        status.classList.remove('success');
+      }
+      status.style.display = 'block';
+      document.getElementById('pwdNoLimit').value = '';
+    }
+
+    function handleWithLimit(e) {
+      e.preventDefault();
+      withLimitAttempts++;
+      const pwd = document.getElementById('pwdWithLimit').value;
+      const status = document.getElementById('limitStatus');
+      const counter = document.getElementById('limitCounter');
+      const btn = document.getElementById('limitBtn');
+
+      counter.textContent = `Intentos: ${withLimitAttempts}/${MAX_ATTEMPTS}`;
+
+      if (pwd === 'secret') {
+        status.textContent = `✅ ¡Correcto! Contraseña acertada después de ${withLimitAttempts} intentos.`;
+        status.classList.add('success');
+      } else {
+        if (withLimitAttempts >= MAX_ATTEMPTS) {
+          status.textContent = `🔒 Cuenta bloqueada. Demasiados intentos fallidos. El sistema impidió un ataque de fuerza bruta.`;
+          status.classList.remove('success');
+          btn.disabled = true;
+          btn.style.opacity = '0.5';
+        } else {
+          status.textContent = `❌ Contraseña incorrecta (${MAX_ATTEMPTS - withLimitAttempts} intentos restantes).`;
+          status.classList.remove('success');
+        }
+      }
+      status.style.display = 'block';
+      document.getElementById('pwdWithLimit').value = '';
+    }
+
+    document.querySelector('form[action="/api/warmup/validate"]').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const response = await fetch('/api/warmup/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.fromEntries(formData))
+      });
+      const data = await response.json();
+      const status = document.getElementById('responseStatus');
+      if (data.ok) {
+        status.textContent = '✅ ¡Correcto! Flag: ' + data.flag;
+        status.classList.add('success');
+      } else {
+        status.textContent = data.message ? ('Error: ' + data.message) : 'Error: respuesta incorrecta. Intenta de nuevo.';
+        status.classList.remove('success');
+      }
+      status.style.display = 'block';
+    });
+  </script>
+  <script src="/public/timed-hints.js"></script>
+  <script src="/public/lab-extras.js"></script>
+</body>
+</html>

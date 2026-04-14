@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warmup - CSRF Mini 1</title>
+  <link rel="stylesheet" href="/public/styles.css">
+  <style>
+    .demo-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    @media (max-width: 768px) {
+      .demo-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    .demo-section {
+      padding: 15px;
+      border-left: 4px solid #ff6b6b;
+      background: rgba(20, 14, 9, 0.75);
+      border: 1px solid rgba(255, 107, 107, 0.35);
+      border-radius: 8px;
+    }
+    .demo-section h3 {
+      margin-top: 0;
+      color: #ff6b6b;
+    }
+    .form-demo {
+      background: rgba(20, 14, 9, 0.75);
+      border: 1px solid rgba(255, 154, 60, 0.28);
+      padding: 15px;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    .form-demo input,
+    .form-demo select,
+    .form-demo button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 8px;
+      font-size: 14px;
+    }
+    .form-demo input,
+    .form-demo select {
+      background: rgba(10, 7, 4, 0.86);
+      border: 1px solid rgba(255, 154, 60, 0.38);
+      color: #f6f2e6;
+    }
+    .form-demo button {
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .form-demo button:hover {
+      background: #e63946;
+    }
+    .status-box {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      background: #fffacd;
+      border-left: 4px solid #ffd700;
+      color: #2f2a00;
+      font-weight: 700;
+    }
+    .status-box.success {
+      background: #d4edda;
+      border-left-color: #28a745;
+      color: #0f5132;
+    }
+      /* warmup dark patch */
+    .demo-container > div,
+    .comparison > div {
+      border: 1px solid rgba(255, 154, 60, 0.28);
+      border-radius: 8px;
+    }
+    .form-demo input,
+    .form-demo textarea,
+    .form-demo select {
+      background: rgba(10, 7, 4, 0.86);
+      color: #f6f2e6;
+      border: 1px solid rgba(255, 154, 60, 0.38);
+    }
+    .form-demo input::placeholder,
+    .form-demo textarea::placeholder {
+      color: #b6aa93;
+      opacity: 1;
+    }
+    .form-demo small,
+    .token-note {
+      color: #d8cab5;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero box" style="background: linear-gradient(135deg, #ff6b6b 0%, #ff8e72 100%); color: white;">
+      <div class="badge" style="background: rgba(255,255,255,0.3);">Warmup | Nivel A</div>
+      <h1>CSRF Attack - Mini Desafio 1</h1>
+      <p>Accion sin Permiso</p>
+    </section>
+
+    <section class="box">
+      <h2>Objetivo</h2>
+      <p>
+        Descubre cómo una acción importante puede ejecutarse <strong>sin que el usuario dé permiso</strong>. 
+        Observa los dos formularios abajo y nota que el segundo realiza una acción sin confirmación extra.
+      </p>
+    </section>
+
+    <section class="box">
+      <h2>Informacion Basica</h2>
+      <p>
+        El ataque <strong>CSRF (Cross-Site Request Forgery)</strong> ocurre cuando:
+      </p>
+      <ul>
+        <li>Tienes una sesión activa en un sitio (ej: tu banco)</li>
+        <li>Visitas otra página maliciosa sin cerrar la sesión</li>
+        <li>Esa página maliciosa hace una petición usando tu sesión</li>
+        <li>El servidor confía en tu sesión y ejecuta la acción</li>
+      </ul>
+      <p class="mini-tip">
+        <strong>Clave:</strong> El formulario seguro deberia requerir confirmacion adicional o usar un token especial (CSRF token).
+      </p>
+    </section>
+
+    <section class="box">
+      <h2>Comparativa</h2>
+      
+      <div class="demo-container">
+        <div class="demo-section">
+          <h3>❌ Formulario sin protección</h3>
+          <p>Este formulario ejecuta la acción sin necesidad de confirmación extra:</p>
+          <form class="form-demo" onsubmit="handleUnsafeTransfer(event)">
+            <input type="text" placeholder="Monto" value="$500" readonly>
+            <input type="text" placeholder="Destinatario" value="atacante@evil.com" readonly>
+            <button type="submit">Transferir dinero</button>
+          </form>
+          <div id="unsafeStatus" class="status-box" style="display:none;"></div>
+        </div>
+
+        <div class="demo-section">
+          <h3>✅ Formulario con confirmación</h3>
+          <p>Este formulario requiere confirmación extra del usuario:</p>
+          <form class="form-demo" onsubmit="handleSafeTransfer(event)">
+            <input type="text" placeholder="Monto" value="$500" readonly>
+            <input type="text" placeholder="Destinatario" value="usuario@banco.com" readonly>
+            <label>
+              <input type="checkbox" required> Confirmo que autorizo esta transferencia
+            </label>
+            <button type="submit">Transferir dinero</button>
+          </form>
+          <div id="safeStatus" class="status-box" style="display:none;"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="box">
+      <h2>✍️ Validar Conocimiento</h2>
+      <p>Basado en lo que viste arriba, responde:</p>
+      <p><strong>¿Cuál es el nombre del ataque que permite ejecutar acciones sin permiso del usuario?</strong></p>
+      <form method="POST" action="/api/warmup/validate" class="form-demo">
+        <input type="hidden" name="section" value="csrf">
+        <input type="hidden" name="mini" value="1">
+        <input 
+          type="text" 
+          name="answer" 
+          placeholder="Respuesta (4 letras)" 
+          required
+          autocomplete="off"
+        >
+        <button type="submit">Comprobar Respuesta</button>
+      </form>
+      <div id="responseStatus" class="status-box" style="display:none;"></div>
+    </section>
+
+    <section class="box">
+      <h2>Pistas</h2>
+      <ul class="timed-hints">
+        <li class="hint-item" data-hint-delay="60000">1 min: El nombre comienza con C.</li>
+        <li class="hint-item" data-hint-delay="180000">3 min: Es un acrónimo de 4 palabras en inglés.</li>
+        <li class="hint-item" data-hint-delay="300000">5 min: CSRF significa "Cross-Site Request..."</li>
+      </ul>
+    </section>
+
+    
+    <section class="box">
+      <h2>Validar Flag y Avanzar</h2>
+      <p>Pega la flag obtenida para desbloquear el siguiente mini desafio.</p>
+      <form class="unlock" method="POST" action="/warmup/validar">
+        <input type="hidden" name="nivel" value="1">
+        <label for="flag-w-1">Flag warm-up 1</label>
+        <input id="flag-w-1" name="flag" autocomplete="off" placeholder="WARMUP{...}" required>
+        <button type="submit">Validar flag</button>
+      </form>
+    </section>
+
+    <section class="box">
+      <p><a href="/warmup/">Volver a Warmup</a></p>
+    </section>
+  </main>
+
+  <script>
+    function handleUnsafeTransfer(e) {
+      e.preventDefault();
+      const status = document.getElementById('unsafeStatus');
+      status.textContent = '✓ Transferencia ejecutada sin confirmación adicional!';
+      status.classList.add('success');
+      status.style.display = 'block';
+    }
+
+    function handleSafeTransfer(e) {
+      e.preventDefault();
+      const status = document.getElementById('safeStatus');
+      status.textContent = '✓ Transferencia requirió confirmación del usuario.';
+      status.classList.add('success');
+      status.style.display = 'block';
+    }
+
+    document.querySelector('form[action="/api/warmup/validate"]').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const response = await fetch('/api/warmup/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.fromEntries(formData))
+      });
+      const data = await response.json();
+      const status = document.getElementById('responseStatus');
+      if (data.ok) {
+        status.textContent = '✅ ¡Correcto! Flag: ' + data.flag;
+        status.classList.add('success');
+      } else {
+        status.textContent = data.message ? ('Error: ' + data.message) : 'Error: respuesta incorrecta. Intenta de nuevo.';
+        status.classList.remove('success');
+      }
+      status.style.display = 'block';
+    });
+  </script>
+  <script src="/public/timed-hints.js"></script>
+  <script src="/public/lab-extras.js"></script>
+</body>
+</html>

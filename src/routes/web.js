@@ -21,6 +21,16 @@ function getWarmupSectionByLevel(level) {
   return WARMUP_SECTIONS.find((section) => section.levels.some((entry) => entry.id === level));
 }
 
+function getWarmupMiniPathByLevel(level) {
+  const section = getWarmupSectionByLevel(level);
+  if (!section) return null;
+
+  const index = section.levels.findIndex((entry) => entry.id === level);
+  if (index < 0) return null;
+
+  return `/warmup/${section.slug}/mini${index + 1}`;
+}
+
 function canAccessLevel(req, level) {
   if (!isWarmupCompleted(req)) return false;
   return getUnlockedLevel(req) >= level;
@@ -71,7 +81,27 @@ router.get('/warmup/:section/', (req, res) => {
   const section = getWarmupSectionBySlug(req.params.section);
   if (!section) return res.status(404).redirect('/warmup/');
 
-  return res.sendFile(path.join(__dirname, '..', '..', 'views', 'warmup-section.html'));
+  // Ruta legacy: redirige al primer mini desafio de la seccion.
+  return res.redirect(`/warmup/${section.slug}/mini1`);
+});
+
+// Rutas para mini-desafíos HTML
+function sendWarmupMini(res, sectionSlug, miniFile) {
+  const section = getWarmupSectionBySlug(sectionSlug);
+  if (!section) {
+    return res.status(404).redirect('/warmup/');
+  }
+
+  const filePath = path.join(__dirname, '..', '..', 'niveles', 'warmup', sectionSlug, `${miniFile}.html`);
+  return res.sendFile(filePath);
+}
+
+router.get('/warmup/:section/mini1', (req, res) => {
+  return sendWarmupMini(res, req.params.section, 'mini1');
+});
+
+router.get('/warmup/:section/mini2', (req, res) => {
+  return sendWarmupMini(res, req.params.section, 'mini2');
 });
 
 router.get('/api/warmup', (req, res) => {
@@ -185,24 +215,71 @@ router.post('/api/warmup/solve', (req, res) => {
   });
 });
 
+// Endpoint para validar respuestas en los mini-desafíos HTML
+router.post('/api/warmup/validate', (req, res) => {
+  const section = String(req.body.section || '').toLowerCase();
+  const mini = Number(req.body.mini || 0);
+  const answerRaw = String(req.body.answer || '');
+
+  // Mapeo de section + mini a levelId
+  const sectionMap = {
+    'csrf': { 1: 1, 2: 2 },
+    'login': { 1: 3, 2: 4 },
+    'sqli': { 1: 5, 2: 6 },
+    'xss': { 1: 7, 2: 8 }
+  };
+
+  const levelId = sectionMap[section]?.[mini];
+  
+  if (!levelId || levelId < 1 || levelId > WARMUP_TOTAL_LEVELS) {
+    return res.status(400).json({ ok: false, message: 'Mini-desafío inválido.' });
+  }
+
+  if (!canAccessWarmupLevel(req, levelId)) {
+    return res.status(403).json({ ok: false, message: 'Este mini-desafío aún no está desbloqueado.' });
+  }
+
+  const sectionObj = getWarmupSectionByLevel(levelId);
+  if (!sectionObj) {
+    return res.status(404).json({ ok: false, message: 'Sección no encontrada.' });
+  }
+
+  const level = sectionObj.levels.find((entry) => entry.id === levelId);
+  if (!level) {
+    return res.status(404).json({ ok: false, message: 'Nivel no encontrado.' });
+  }
+
+  const expected = normalizeAnswer(level.answer);
+  const provided = normalizeAnswer(answerRaw);
+  
+  if (!provided || provided !== expected) {
+    return res.json({ ok: false, message: 'Respuesta incorrecta. Intenta de nuevo.' });
+  }
+
+  return res.json({
+    ok: true,
+    flag: WARMUP_FLAGS[levelId],
+    message: 'Respuesta correcta.'
+  });
+});
+
 router.post('/warmup/validar', (req, res) => {
   const nivel = Number(req.body.nivel);
   const flag = String(req.body.flag || '').trim();
   const unlocked = getWarmupUnlockedLevel(req);
-  const section = getWarmupSectionByLevel(nivel);
+  const currentMiniPath = getWarmupMiniPathByLevel(nivel) || '/warmup/';
 
   if (!Number.isInteger(nivel) || nivel < 1 || nivel > WARMUP_TOTAL_LEVELS) {
     return res.redirect('/warmup/');
   }
 
   if (unlocked <= WARMUP_TOTAL_LEVELS && unlocked < nivel) {
-    if (!section) return res.redirect('/warmup/?error=locked');
-    return res.redirect(`/warmup/${section.slug}/?error=locked`);
+    const unlockedPath = getWarmupMiniPathByLevel(unlocked) || '/warmup/';
+    return res.redirect(`${unlockedPath}?error=locked`);
   }
 
   if (flag !== WARMUP_FLAGS[nivel]) {
-    if (!section) return res.redirect(`/warmup/?error=1&nivel=${nivel}`);
-    return res.redirect(`/warmup/${section.slug}/?error=1&nivel=${nivel}`);
+    return res.redirect(`${currentMiniPath}?error=1&nivel=${nivel}`);
   }
 
   const nextUnlocked = Math.max(unlocked, nivel + 1);
@@ -213,8 +290,8 @@ router.post('/warmup/validar', (req, res) => {
     return res.redirect('/?warmup=done');
   }
 
-  const nextSection = getWarmupSectionByLevel(nextUnlocked);
-  if (nextSection) return res.redirect(`/warmup/${nextSection.slug}/`);
+  const nextMiniPath = getWarmupMiniPathByLevel(nextUnlocked);
+  if (nextMiniPath) return res.redirect(nextMiniPath);
   return res.redirect('/warmup/');
 });
 

@@ -268,6 +268,30 @@ a:hover {
   gap: 12px;
 }
 
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.category-card {
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  padding: 14px;
+  background: rgba(11, 8, 5, 0.75);
+}
+
+.category-card h3 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.category-card ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+}
+
 .level-card {
   margin: 0;
 }
@@ -439,6 +463,10 @@ a:hover {
 
   .stats,
   .level-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .category-grid {
     grid-template-columns: 1fr;
   }
 }
