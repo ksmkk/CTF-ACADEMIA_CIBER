@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warmup - Privilege Esc</title>
+  <link rel="stylesheet" href="/public/styles.css">
+  <style>
+    .demo-box {
+      background: rgba(20, 14, 9, 0.75);
+      border: 1px solid rgba(239, 83, 80, 0.35);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+    }
+    .code-box {
+      background: #111;
+      color: #ffd8d8;
+      border: 1px solid rgba(239, 83, 80, 0.35);
+      border-radius: 8px;
+      padding: 14px;
+      overflow-x: auto;
+      font-family: Consolas, monospace;
+    }
+    .form-demo {
+      background: rgba(20, 14, 9, 0.75);
+      border: 1px solid rgba(255, 154, 60, 0.28);
+      border-radius: 8px;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .form-demo input,
+    .form-demo button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    .form-demo input {
+      background: rgba(10, 7, 4, 0.86);
+      border: 1px solid rgba(255, 154, 60, 0.38);
+      color: #f6f2e6;
+      border-radius: 6px;
+    }
+    .form-demo button {
+      background: #ef5350;
+      border: none;
+      color: #2b0707;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .status-box {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 6px;
+      background: #fff6cc;
+      color: #4a3b00;
+      border-left: 4px solid #d6aa00;
+      font-weight: 700;
+      display: none;
+    }
+    .status-box.success {
+      background: #d7f3df;
+      border-left-color: #2e9d58;
+      color: #104824;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero box" style="background: linear-gradient(135deg, #ef5350 0%, #c62828 100%); color: #2d0707;">
+      <div class="badge" style="background: rgba(255,255,255,0.36);">Warmup | Nivel 5</div>
+      <h1>Privilege Esc - Concepto SUID</h1>
+      <p>Reto guiado: base tecnica del bit SUID</p>
+    </section>
+
+    <section class="box">
+      <h2>Objetivo</h2>
+      <p>Entender que hace el bit SUID y sus aplicaciones.</p>
+    </section>
+
+    <section class="box">
+      <h2>Demo rapida</h2>
+      <div class="demo-box">
+        <p>Binario comun:</p>
+        <div class="code-box">-rwxr-xr-x 1 root root /usr/bin/tool</div>
+        <p>Binario con SUID:</p>
+        <div class="code-box">-rwsr-xr-x 1 root root /usr/bin/tool</div>
+      </div>
+      <p class="mini-tip">Cuando hay SUID, el binario corre con privilegios del owner (normalmente root).</p>
+    </section>
+
+    <section class="box">
+      <h2>Validar conocimiento</h2>
+      <p><strong>Pregunta:</strong> Cual es el nombre comun de los privilegios especiales?</p>
+      <form method="POST" action="/api/warmup/validate" class="form-demo">
+        <input type="hidden" name="section" value="privesc">
+        <input type="hidden" name="mini" value="1">
+        <input type="text" name="answer" placeholder="Escribe tu respuesta" autocomplete="off" required>
+        <button type="submit">Comprobar respuesta</button>
+      </form>
+      <div id="responseStatus" class="status-box"></div>
+    </section>
+
+    <section class="box">
+      <h2>Validar flag y terminar</h2>
+      <form class="unlock" method="POST" action="/warmup/validar">
+        <input type="hidden" name="nivel" value="5">
+        <label for="flag-w-5">Flag warm-up 5</label>
+        <input id="flag-w-5" name="flag" autocomplete="off" placeholder="WARMUP{...}" required>
+        <button type="submit">Validar flag</button>
+      </form>
+    </section>
+
+    <section class="box">
+      <p><a href="/warmup/">Volver a Warmup</a></p>
+    </section>
+  </main>
+
+  <script>
+    document.querySelector('form[action="/api/warmup/validate"]').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const response = await fetch('/api/warmup/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.fromEntries(formData))
+      });
+      const data = await response.json();
+      const status = document.getElementById('responseStatus');
+      if (data.ok) {
+        status.textContent = 'Correcto. Flag: ' + data.flag;
+        status.classList.add('success');
+      } else {
+        status.textContent = data.message || 'Respuesta incorrecta.';
+        status.classList.remove('success');
+      }
+      status.style.display = 'block';
+    });
+  </script>
+  <script src="/public/timed-hints.js"></script>
+  <script src="/public/lab-extras.js"></script>
+</body>
+</html>

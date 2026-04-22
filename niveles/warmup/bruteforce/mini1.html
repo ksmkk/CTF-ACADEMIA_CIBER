@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warmup - Fuerza Bruta</title>
+  <link rel="stylesheet" href="/public/styles.css">
+  <style>
+    .demo-box {
+      background: rgba(20, 14, 9, 0.75);
+      border: 1px solid rgba(255, 183, 77, 0.35);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+    }
+    .form-demo {
+      background: rgba(20, 14, 9, 0.75);
+      border: 1px solid rgba(255, 154, 60, 0.28);
+      border-radius: 8px;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .form-demo input,
+    .form-demo button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    .form-demo input {
+      background: rgba(10, 7, 4, 0.86);
+      border: 1px solid rgba(255, 154, 60, 0.38);
+      color: #f6f2e6;
+      border-radius: 6px;
+    }
+    .form-demo button {
+      background: #ffb74d;
+      border: none;
+      color: #2b1500;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .status-box {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 6px;
+      background: #fff6cc;
+      color: #4a3b00;
+      border-left: 4px solid #d6aa00;
+      font-weight: 700;
+      display: none;
+    }
+    .status-box.success {
+      background: #d7f3df;
+      border-left-color: #2e9d58;
+      color: #104824;
+    }
+    .counter {
+      background: rgba(255, 183, 77, 0.16);
+      border: 1px solid rgba(255, 183, 77, 0.45);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 10px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero box" style="background: linear-gradient(135deg, #ffb74d 0%, #fb8c00 100%); color: #291402;">
+      <div class="badge" style="background: rgba(255,255,255,0.36);">Warmup | Nivel 3</div>
+      <h1>Fuerza Bruta - Login debil</h1>
+      <p>Reto guiado: por que una clave comun cae rapido</p>
+    </section>
+
+    <section class="box">
+      <h2>Objetivo</h2>
+      <p>Ver que un atacante prueba primero passwords comunes. Si una app acepta una clave tipica, cae en segundos.</p>
+    </section>
+
+    <section class="box">
+      <h2>Demo de intentos</h2>
+      <div class="demo-box">
+        <form class="form-demo" onsubmit="testPassword(event)">
+          <input id="candidatePwd" type="text" placeholder="Prueba una password" required>
+          <button type="submit">Probar login</button>
+        </form>
+        <div id="attemptCounter" class="counter">Intentos: 0</div>
+        <div id="demoStatus" class="status-box"></div>
+      </div>
+      <p class="mini-tip">Lista comun de ataque: admin, password, 1234, qwerty.</p>
+    </section>
+
+    <section class="box">
+      <h2>Validar conocimiento</h2>
+      <p><strong>Pregunta:</strong> Cual es la clave comun usada como ejemplo principal en este nivel?</p>
+      <form method="POST" action="/api/warmup/validate" class="form-demo">
+        <input type="hidden" name="section" value="bruteforce">
+        <input type="hidden" name="mini" value="1">
+        <input type="text" name="answer" placeholder="Respuesta" autocomplete="off" required>
+        <button type="submit">Comprobar respuesta</button>
+      </form>
+      <div id="responseStatus" class="status-box"></div>
+    </section>
+
+    <section class="box">
+      <h2>Validar flag y avanzar</h2>
+      <form class="unlock" method="POST" action="/warmup/validar">
+        <input type="hidden" name="nivel" value="3">
+        <label for="flag-w-3">Flag warm-up 3</label>
+        <input id="flag-w-3" name="flag" autocomplete="off" placeholder="WARMUP{...}" required>
+        <button type="submit">Validar flag</button>
+      </form>
+    </section>
+
+    <section class="box">
+      <p><a href="/warmup/">Volver a Warmup</a></p>
+    </section>
+  </main>
+
+  <script>
+    let attempts = 0;
+
+    function testPassword(event) {
+      event.preventDefault();
+      attempts += 1;
+      const value = document.getElementById('candidatePwd').value.trim();
+      const status = document.getElementById('demoStatus');
+      document.getElementById('attemptCounter').textContent = `Intentos: ${attempts}`;
+      if (value === 'admin') {
+        status.textContent = 'Login exitoso con una clave extremadamente comun.';
+        status.classList.add('success');
+      } else {
+        status.textContent = 'Clave incorrecta. Un bot seguiria probando listas comunes.';
+        status.classList.remove('success');
+      }
+      status.style.display = 'block';
+      document.getElementById('candidatePwd').value = '';
+    }
+
+    document.querySelector('form[action="/api/warmup/validate"]').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const response = await fetch('/api/warmup/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.fromEntries(formData))
+      });
+      const data = await response.json();
+      const status = document.getElementById('responseStatus');
+      if (data.ok) {
+        status.textContent = 'Correcto. Flag: ' + data.flag;
+        status.classList.add('success');
+      } else {
+        status.textContent = data.message || 'Respuesta incorrecta.';
+        status.classList.remove('success');
+      }
+      status.style.display = 'block';
+    });
+  </script>
+  <script src="/public/timed-hints.js"></script>
+  <script src="/public/lab-extras.js"></script>
+</body>
+</html>

@@ -4,5 +4,5 @@ const { createApp } = require('./app');
 const app = createApp();
 
 app.listen(PORT, () => {
-  console.log(`CTF levantado en http://localhost:${PORT}`);
+  console.log(`Warmup levantado en http://localhost:${PORT}`);
 });

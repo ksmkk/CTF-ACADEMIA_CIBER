@@ -1,7 +1,7 @@
 const path = require('path');
 const express = require('express');
 const { TOTAL_LEVELS, WARMUP_TOTAL_LEVELS } = require('../config');
-const { CTF_FLAGS, WARMUP_FLAGS } = require('../config/flags');
+const { CTF_FLAGS, WARMUP_FLAGS, getFinalValidatorFlag } = require('../config/flags');
 const { WARMUP_SECTIONS } = require('../config/warmup');
 const {
   getUnlockedLevel,
@@ -57,7 +57,7 @@ function canAccessWarmupLevel(req, level) {
 }
 
 router.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', '..', 'views', 'home.html'));
+  return res.redirect('/warmup/');
 });
 
 router.get('/api/progreso', (req, res) => {
@@ -92,16 +92,17 @@ function sendWarmupMini(res, sectionSlug, miniFile) {
     return res.status(404).redirect('/warmup/');
   }
 
+  const miniIndex = Number(String(miniFile).replace('mini', '')) - 1;
+  if (!Number.isInteger(miniIndex) || miniIndex < 0 || miniIndex >= section.levels.length) {
+    return res.status(404).redirect(`/warmup/${section.slug}/`);
+  }
+
   const filePath = path.join(__dirname, '..', '..', 'niveles', 'warmup', sectionSlug, `${miniFile}.html`);
   return res.sendFile(filePath);
 }
 
-router.get('/warmup/:section/mini1', (req, res) => {
-  return sendWarmupMini(res, req.params.section, 'mini1');
-});
-
-router.get('/warmup/:section/mini2', (req, res) => {
-  return sendWarmupMini(res, req.params.section, 'mini2');
+router.get('/warmup/:section/mini:miniNumber(\\d+)', (req, res) => {
+  return sendWarmupMini(res, req.params.section, `mini${req.params.miniNumber}`);
 });
 
 router.get('/api/warmup', (req, res) => {
@@ -120,7 +121,7 @@ router.get('/api/warmup/sections', (req, res) => {
 
   const sections = WARMUP_SECTIONS.map((section) => {
     const start = section.levels[0].id;
-    const end = section.levels[1].id;
+    const end = section.levels[section.levels.length - 1].id;
     const available = completed || unlocked >= start;
     const sectionCompleted = completed || unlocked > end;
 
@@ -221,15 +222,9 @@ router.post('/api/warmup/validate', (req, res) => {
   const mini = Number(req.body.mini || 0);
   const answerRaw = String(req.body.answer || '');
 
-  // Mapeo de section + mini a levelId
-  const sectionMap = {
-    'csrf': { 1: 1, 2: 2 },
-    'login': { 1: 3, 2: 4 },
-    'sqli': { 1: 5, 2: 6 },
-    'xss': { 1: 7, 2: 8 }
-  };
-
-  const levelId = sectionMap[section]?.[mini];
+  const sectionObj = getWarmupSectionBySlug(section);
+  const level = sectionObj && mini >= 1 ? sectionObj.levels[mini - 1] : null;
+  const levelId = level ? level.id : 0;
   
   if (!levelId || levelId < 1 || levelId > WARMUP_TOTAL_LEVELS) {
     return res.status(400).json({ ok: false, message: 'Mini-desafío inválido.' });
@@ -239,12 +234,6 @@ router.post('/api/warmup/validate', (req, res) => {
     return res.status(403).json({ ok: false, message: 'Este mini-desafío aún no está desbloqueado.' });
   }
 
-  const sectionObj = getWarmupSectionByLevel(levelId);
-  if (!sectionObj) {
-    return res.status(404).json({ ok: false, message: 'Sección no encontrada.' });
-  }
-
-  const level = sectionObj.levels.find((entry) => entry.id === levelId);
   if (!level) {
     return res.status(404).json({ ok: false, message: 'Nivel no encontrado.' });
   }
@@ -261,6 +250,25 @@ router.post('/api/warmup/validate', (req, res) => {
     flag: WARMUP_FLAGS[levelId],
     message: 'Respuesta correcta.'
   });
+});
+
+router.post('/api/warmup/final-validator', (req, res) => {
+  if (!isWarmupCompleted(req)) {
+    return res.status(403).json({ ok: false, message: 'Completa los 5 warmups antes de usar el validador final.' });
+  }
+
+  const providedFlag = String(req.body.flag || '').trim();
+  const expectedFlag = getFinalValidatorFlag();
+
+  if (!providedFlag) {
+    return res.status(400).json({ ok: false, message: 'Debes ingresar una flag.' });
+  }
+
+  if (providedFlag !== expectedFlag) {
+    return res.json({ ok: false, message: 'Flag incorrecta. Revisa el recorrido completo.' });
+  }
+
+  return res.json({ ok: true, message: 'Validacion final correcta.' });
 });
 
 router.post('/warmup/validar', (req, res) => {

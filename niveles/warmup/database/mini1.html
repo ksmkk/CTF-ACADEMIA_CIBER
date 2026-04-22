@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warmup - Bases de Datos</title>
+  <link rel="stylesheet" href="/public/styles.css">
+  <style>
+    .table-box {
+      background: rgba(20, 14, 9, 0.75);
+      border: 1px solid rgba(186, 104, 200, 0.35);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th,
+    td {
+      border: 1px solid rgba(255, 154, 60, 0.28);
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background: rgba(186, 104, 200, 0.22);
+    }
+    .form-demo {
+      background: rgba(20, 14, 9, 0.75);
+      border: 1px solid rgba(255, 154, 60, 0.28);
+      border-radius: 8px;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .form-demo input,
+    .form-demo button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    .form-demo input {
+      background: rgba(10, 7, 4, 0.86);
+      border: 1px solid rgba(255, 154, 60, 0.38);
+      color: #f6f2e6;
+      border-radius: 6px;
+    }
+    .form-demo button {
+      background: #ba68c8;
+      border: none;
+      color: #2a062f;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .status-box {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 6px;
+      background: #fff6cc;
+      color: #4a3b00;
+      border-left: 4px solid #d6aa00;
+      font-weight: 700;
+      display: none;
+    }
+    .status-box.success {
+      background: #d7f3df;
+      border-left-color: #2e9d58;
+      color: #104824;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero box" style="background: linear-gradient(135deg, #ba68c8 0%, #8e24aa 100%); color: #230429;">
+      <div class="badge" style="background: rgba(255,255,255,0.36);">Warmup | Nivel 4</div>
+      <h1>Bases de Datos - Tabla simple</h1>
+      <p>Reto guiado: identificar el campo sensible</p>
+    </section>
+
+    <section class="box">
+      <h2>Objetivo</h2>
+      <p>En este nivel la flag esta en una tabla simple. Debes ubicar la columna correcta.</p>
+    </section>
+
+    <section class="box">
+      <h2>Tabla de ejemplo</h2>
+      <div class="table-box">
+        <table>
+          <thead>
+            <tr>
+              <th>id</th>
+              <th>username</th>
+              <th>dato_sensible</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>student</td>
+              <td>registro_enmascarado</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mini-tip">Idea clave: en muchos retos la parte dificil no es la sintaxis SQL, sino identificar que campo contiene el dato sensible.</p>
+    </section>
+
+    <section class="box">
+      <h2>Validar conocimiento</h2>
+      <p><strong>Pregunta:</strong> Como se llama la columna marcada como dato sensible?</p>
+      <form method="POST" action="/api/warmup/validate" class="form-demo">
+        <input type="hidden" name="section" value="database">
+        <input type="hidden" name="mini" value="1">
+        <input type="text" name="answer" placeholder="Nombre de la columna" autocomplete="off" required>
+        <button type="submit">Comprobar respuesta</button>
+      </form>
+      <div id="responseStatus" class="status-box"></div>
+    </section>
+
+    <section class="box">
+      <h2>Validar flag y avanzar</h2>
+      <form class="unlock" method="POST" action="/warmup/validar">
+        <input type="hidden" name="nivel" value="4">
+        <label for="flag-w-4">Flag warm-up 4</label>
+        <input id="flag-w-4" name="flag" autocomplete="off" placeholder="WARMUP{...}" required>
+        <button type="submit">Validar flag</button>
+      </form>
+    </section>
+
+    <section class="box">
+      <p><a href="/warmup/">Volver a Warmup</a></p>
+    </section>
+  </main>
+
+  <script>
+    document.querySelector('form[action="/api/warmup/validate"]').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const response = await fetch('/api/warmup/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.fromEntries(formData))
+      });
+      const data = await response.json();
+      const status = document.getElementById('responseStatus');
+      if (data.ok) {
+        status.textContent = 'Correcto. Flag: ' + data.flag;
+        status.classList.add('success');
+      } else {
+        status.textContent = data.message || 'Respuesta incorrecta.';
+        status.classList.remove('success');
+      }
+      status.style.display = 'block';
+    });
+  </script>
+  <script src="/public/timed-hints.js"></script>
+  <script src="/public/lab-extras.js"></script>
+</body>
+</html>

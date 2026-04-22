@@ -3,213 +3,224 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Warm-up Challenges</title>
+  <title>Warmup Academy</title>
   <link rel="stylesheet" href="/public/styles.css">
-  <style>
-    .warmup-hero {
-      background:
-        radial-gradient(600px 200px at 80% -10%, rgba(255, 154, 60, 0.18), transparent 60%),
-        linear-gradient(160deg, rgba(20, 14, 9, 0.9), rgba(10, 7, 4, 0.88));
-      color: var(--ink);
-      padding: 40px 20px;
-      border-radius: 8px;
-      margin-bottom: 30px;
-      border: 1px solid var(--line-soft);
-    }
-    .warmup-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      margin: 20px 0;
-    }
-    .section-card {
-      background: rgba(20, 14, 9, 0.78);
-      border: 1px solid var(--line-soft);
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.32);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .section-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.38);
-    }
-    .section-card.csrf { border-left: 5px solid #ff6b6b; }
-    .section-card.login { border-left: 5px solid #4ecdc4; }
-    .section-card.sqli { border-left: 5px solid #f39c12; }
-    .section-card.xss { border-left: 5px solid #e74c3c; }
-    
-    .section-header {
-      padding: 20px;
-      background: linear-gradient(135deg, rgba(255, 154, 60, 0.08), transparent);
-    }
-    .section-header h3 {
-      margin: 0 0 10px 0;
-      font-size: 20px;
-    }
-    .section-header p {
-      margin: 0;
-      font-size: 14px;
-      color: #d8cab5;
-    }
-    .section-status {
-      display: flex;
-      gap: 10px;
-      padding: 15px 20px;
-      background: rgba(10, 7, 4, 0.62);
-      border-top: 1px solid var(--line-soft);
-    }
-    .status-badge {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: bold;
-    }
-    .status-locked { background: rgba(255, 116, 116, 0.12); color: #ffb3b3; border: 1px solid rgba(255, 116, 116, 0.32); }
-    .status-available { background: rgba(125, 255, 156, 0.12); color: #bfffd0; border: 1px solid rgba(125, 255, 156, 0.28); }
-    .status-completed { background: rgba(98, 184, 255, 0.12); color: #b8deff; border: 1px solid rgba(98, 184, 255, 0.3); }
-    
-    .mini-retos {
-      padding: 15px 20px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .mini-link {
-      flex: 1;
-      min-width: 130px;
-      padding: 10px 15px;
-      border-radius: 4px;
-      text-align: center;
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: bold;
-      transition: all 0.2s;
-      border: 2px solid;
-    }
-    .mini-link.csrf { color: #ff6b6b; border-color: #ff6b6b; background: rgba(255,107,107,0.1); }
-    .mini-link.csrf:hover { background: rgba(255,107,107,0.2); }
-    
-    .mini-link.login { color: #4ecdc4; border-color: #4ecdc4; background: rgba(78,205,196,0.1); }
-    .mini-link.login:hover { background: rgba(78,205,196,0.2); }
-    
-    .mini-link.sqli { color: #f39c12; border-color: #f39c12; background: rgba(243,156,18,0.1); }
-    .mini-link.sqli:hover { background: rgba(243,156,18,0.2); }
-    
-    .mini-link.xss { color: #e74c3c; border-color: #e74c3c; background: rgba(231,76,60,0.1); }
-    .mini-link.xss:hover { background: rgba(231,76,60,0.2); }
-    
-    .mini-link.disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-    
-    .stats-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 15px;
-      margin: 20px 0;
-    }
-  </style>
 </head>
 <body>
   <main class="container">
-    <section class="warmup-hero box">
-      <div class="badge">Fase previa obligatoria</div>
-      <h1>Warm-up Challenges</h1>
-      <p>Mini desafios practicos para llegar con confianza al CTF principal.</p>
-      <p class="mini-tip">Completa 2 mini-retos por seccion. Cada seccion se desbloquea cuando terminas la anterior.</p>
+    <section class="hero box warmup-hero">
+      <div class="badge">CTF Academia | Solo Warmups</div>
+      <h1>Ruta Guiada de Warmup</h1>
+      <p class="lead">Ahora el repositorio queda enfocado unicamente en warmups. Cada nivel te prepara para la maquina real con retos cortos, guiados y secuenciales.</p>
+      <div class="actions" style="margin-top: 14px;">
+        <a class="btn" href="#warmupGrid">Ir a los niveles</a>
+        <form method="POST" action="/reiniciar">
+          <button class="btn btn-ghost" type="submit">Reiniciar progreso</button>
+        </form>
+      </div>
+      <p class="mini-tip">Formato de flag en warmup: WARMUP{...}</p>
     </section>
 
     <section class="box">
-      <h2>Estado del Warm-up</h2>
+      <h2>Progreso actual</h2>
       <div class="stats-container">
-        <div class="stat-card">
+        <article class="stat-card">
           <span class="stat-label">Completadas</span>
           <strong id="warmupCompleted" class="stat-value">0</strong>
-        </div>
-        <div class="stat-card">
+        </article>
+        <article class="stat-card">
           <span class="stat-label">Total</span>
-          <strong id="warmupTotal" class="stat-value">8</strong>
-        </div>
-        <div class="stat-card">
+          <strong id="warmupTotal" class="stat-value">5</strong>
+        </article>
+        <article class="stat-card">
           <span class="stat-label">Estado</span>
           <strong id="warmupState" class="stat-value">En curso</strong>
-        </div>
+        </article>
       </div>
     </section>
 
     <section class="box">
-      <h2>Mini-Desafios por Seccion</h2>
+      <h2>Temario que usaremos en la maquina real</h2>
+      <div class="topic-table-wrap">
+        <table class="topic-table">
+          <thead>
+            <tr>
+              <th>Nivel</th>
+              <th>Tema</th>
+              <th>Mini-reto guiado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Nmap</td>
+              <td>Reconocer la bandera que detecta versiones de servicios.</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>LFI</td>
+              <td>Entender carga de archivo local y ubicar la extension objetivo.</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Fuerza Bruta</td>
+              <td>Login sencillo con password comun de diccionario.</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Bases de Datos</td>
+              <td>Identificar la columna de tabla donde esta la flag.</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Privilege Esc</td>
+              <td>Concepto tecnico del bit SUID y su valor en octal.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="box">
+      <h2>Niveles de warmup</h2>
       <div class="warmup-grid" id="warmupGrid">
-        <p style="text-align: center; grid-column: 1/-1;">Cargando desafíos...</p>
+        <p style="text-align: center; grid-column: 1/-1;">Cargando niveles...</p>
       </div>
     </section>
 
-    <section class="box">
-      <p><a href="/">← Volver al inicio</a></p>
+    <section class="box" id="validatorBox">
+      <h2>VALIDADOR</h2>
+      <p>Cuando completes todos los warmups, valida aqui tu flag final.</p>
+      <form id="finalValidatorForm" class="unlock">
+        <label for="finalFlag">Flag final</label>
+        <input id="finalFlag" name="flag" autocomplete="off" placeholder="ACADEMIA{...}" required>
+        <button id="finalValidatorBtn" type="submit">Validar</button>
+      </form>
+      <div id="finalValidatorStatus" class="mini-tip" style="display:none;"></div>
+
+      <div id="celebrationPanel" class="validator-celebration" style="display:none;">
+        <h3>Mision completada</h3>
+        <img class="validator-gif" src="/public/media/final.gif" alt="Celebracion final">
+        <audio id="celebrationAudio" preload="auto" controls>
+          <source src="/public/media/final-song.mp3" type="audio/mpeg">
+        </audio>
+      </div>
     </section>
   </main>
 
   <script>
+    const celebrationAudio = document.getElementById('celebrationAudio');
+
+    celebrationAudio.addEventListener('loadedmetadata', () => {
+      if (celebrationAudio.currentTime < 12) {
+        celebrationAudio.currentTime = 12;
+      }
+    });
+
+    celebrationAudio.addEventListener('play', () => {
+      if (celebrationAudio.currentTime < 12) {
+        celebrationAudio.currentTime = 12;
+      }
+    });
+
     (async function () {
       try {
-        const res = await fetch('/api/warmup/sections');
-        const data = await res.json();
-        
+        const response = await fetch('/api/warmup/sections');
+        const data = await response.json();
+        const validatorBtn = document.getElementById('finalValidatorBtn');
+        const validatorStatus = document.getElementById('finalValidatorStatus');
+
         document.getElementById('warmupCompleted').textContent = String(Math.max(0, data.unlocked - 1));
         document.getElementById('warmupTotal').textContent = String(data.total);
         document.getElementById('warmupState').textContent = data.completed ? 'Completado' : 'En curso';
 
+        if (!data.completed) {
+          validatorBtn.disabled = true;
+          validatorStatus.textContent = 'El VALIDADOR se habilita al completar los 5 warmups.';
+          validatorStatus.style.display = 'block';
+        }
+
         const sectionNames = {
-          'csrf': { emoji: '', color: 'csrf', title: 'CSRF Attack', desc: 'Accion sin permiso' },
-          'login': { emoji: '', color: 'login', title: 'Login Debil', desc: 'Autenticacion insegura' },
-          'sqli': { emoji: '', color: 'sqli', title: 'SQL Injection', desc: 'Inyeccion en base de datos' },
-          'xss': { emoji: '', color: 'xss', title: 'XSS', desc: 'Code en navegador' },
-          'idor': { emoji: '', color: 'csrf', title: 'IDOR', desc: 'Cambio de ID' }
+          nmap: { color: 'nmap', title: 'Nmap', subtitle: 'Reconocimiento de servicios' },
+          lfi: { color: 'lfi', title: 'LFI', subtitle: 'Lectura de archivos locales' },
+          bruteforce: { color: 'bruteforce', title: 'Fuerza Bruta', subtitle: 'Login debil y diccionario' },
+          database: { color: 'database', title: 'Bases de Datos', subtitle: 'Flag en columna de tabla' },
+          privesc: { color: 'privesc', title: 'Privilege Esc', subtitle: 'Permisos especiales SUID' }
         };
 
         const grid = document.getElementById('warmupGrid');
         grid.innerHTML = data.sections
           .map((section) => {
-            const config = sectionNames[section.slug] || { emoji: '', color: 'csrf', title: section.title };
+            const config = sectionNames[section.slug] || { color: 'nmap', title: section.title, subtitle: 'Warmup guiado' };
             const locked = !section.available;
             const completed = section.completed;
-            const status = locked ? 'Bloqueado' : (completed ? 'Completado' : 'En curso');
+            const status = locked ? 'Bloqueado' : (completed ? 'Completado' : 'Disponible');
             const statusClass = locked ? 'status-locked' : (completed ? 'status-completed' : 'status-available');
+            const firstMiniHref = locked ? '#' : `/warmup/${section.slug}/mini1`;
 
             return `
-              <div class="section-card ${config.color} ${locked ? 'locked' : ''}">
+              <article class="section-card ${config.color}">
                 <div class="section-header">
-                  <h3>${config.emoji} ${config.title}</h3>
-                  <p>${config.desc}</p>
+                  <h3>${config.title}</h3>
+                  <p>${config.subtitle}</p>
                 </div>
                 <div class="section-status">
                   <span class="status-badge ${statusClass}">${status}</span>
                 </div>
                 <div class="mini-retos">
-                  <a class="mini-link ${config.color} ${locked ? 'disabled' : ''}" 
-                     href="${locked ? '#' : `/warmup/${section.slug}/mini1`}">
-                    Mini 1
-                  </a>
-                  <a class="mini-link ${config.color} ${locked ? 'disabled' : ''}" 
-                     href="${locked ? '#' : `/warmup/${section.slug}/mini2`}">
-                    Mini 2
+                  <a class="mini-link ${config.color} ${locked ? 'disabled' : ''}" href="${firstMiniHref}">
+                    Abrir nivel
                   </a>
                 </div>
-              </div>
+              </article>
             `;
           })
           .join('');
-      } catch (err) {
-        console.error('Error cargando desafíos:', err);
-        document.getElementById('warmupGrid').innerHTML = '<article class="box warning"><p>No se pudo cargar el estado del Warm-up.</p></article>';
+      } catch (error) {
+        console.error('Error cargando warmups:', error);
+        document.getElementById('warmupGrid').innerHTML = '<article class="box warning"><p>No se pudo cargar el estado del warmup.</p></article>';
       }
     })();
+
+    document.getElementById('finalValidatorForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const status = document.getElementById('finalValidatorStatus');
+      const celebrationPanel = document.getElementById('celebrationPanel');
+      const flagInput = document.getElementById('finalFlag');
+
+      const response = await fetch('/api/warmup/final-validator', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ flag: flagInput.value })
+      });
+      const data = await response.json();
+
+      if (!data.ok) {
+        celebrationPanel.classList.remove('celebration-active');
+        celebrationPanel.style.display = 'none';
+        celebrationAudio.pause();
+        celebrationAudio.currentTime = 12;
+        status.textContent = data.message || 'No se pudo validar la flag.';
+        status.style.display = 'block';
+        return;
+      }
+
+      status.textContent = 'Validacion correcta. Celebracion activada.';
+      status.style.display = 'block';
+      celebrationPanel.classList.remove('celebration-active');
+      celebrationPanel.style.display = 'block';
+      requestAnimationFrame(() => {
+        celebrationPanel.classList.add('celebration-active');
+      });
+
+      try {
+        celebrationAudio.currentTime = 12;
+        await celebrationAudio.play();
+      } catch (_error) {
+        // Si el navegador bloquea autoplay, el control de audio queda visible para reproducir manualmente.
+      }
+    });
   </script>
-  <script src="/public/timed-hints.js"></script>
   <script src="/public/lab-extras.js"></script>
 </body>
 </html>

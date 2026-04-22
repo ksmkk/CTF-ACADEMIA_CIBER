@@ -1,196 +1,140 @@
 const WARMUP_SECTIONS = [
   {
-    slug: 'csrf',
-    title: 'CSRF Attack',
-    intro: 'Aprende como una pagina maliciosa puede hacer una accion en tu cuenta sin pedir permiso.',
+    slug: 'nmap',
+    title: 'Nmap',
+    intro: 'Mini reto guiado para recordar la bandera de Nmap que detecta versiones de servicios.',
     levels: [
       {
         id: 1,
-        title: 'Nivel A: accion sin permiso',
-        objective: 'Ver como una accion importante se puede ejecutar sin confirmar al usuario.',
-        open: 'Lee la seccion "Mini ejercicio" de esta tarjeta.',
-        observe: 'Que una accion puede pasar sin permiso del usuario.',
-        deliver: 'Escribe la respuesta, pulsa "Comprobar respuesta" y luego valida la flag abajo.',
-        challenge: 'Si una pagina externa fuerza una accion sin permiso, ¿que ataque es?',
-        sampleAnswer: 'csrf',
-        answer: 'csrf',
+        title: 'Nivel 1: Deteccion de servicios',
+        objective: 'Identificar la opcion de Nmap para detectar versiones de servicios.',
+        open: 'Lee el ejemplo del comando y prueba la pregunta de validacion.',
+        observe: 'Que no es lo mismo detectar puertos abiertos que detectar versiones.',
+        deliver: 'Responde con la bandera correcta, obten la flag y validala abajo.',
+        challenge: '¿Que opcion de Nmap detecta versiones de servicios?',
+        sampleAnswer: '-sV',
+        answer: 'sv',
         steps: [
-          'Lee la guia rapida de esta tarjeta.',
+          'Compara un escaneo basico con uno de version.',
           'Responde el mini ejercicio.',
-          'Con la flag obtenida, valida abajo.'
+          'Valida la flag para desbloquear el siguiente nivel.'
         ],
         hints: [
-          'Este ataque usa la sesion activa del usuario.',
-          'No necesita que el usuario apriete confirmar en la app real.',
-          'La respuesta es el nombre del ataque.'
-        ]
-      },
-      {
-        id: 2,
-        title: 'Nivel B: sesion activa',
-        objective: 'Comprobar que una sesion abierta puede usarse en contra del usuario.',
-        open: 'Lee la pregunta del mini ejercicio en esta tarjeta.',
-        observe: 'Que falta una proteccion en el formulario.',
-        deliver: 'Responde, pulsa "Comprobar respuesta" y valida la flag que aparezca.',
-        challenge: 'Para evitar CSRF en formularios, ¿que elemento de seguridad se agrega normalmente?',
-        sampleAnswer: 'token',
-        answer: 'token',
-        steps: [
-          'Lee el enunciado de proteccion.',
-          'Responde el mini ejercicio.',
-          'Cuando salga la flag, validala.'
-        ],
-        hints: [
-          'El nombre corto es de 5 letras.',
-          'Va en formularios y cambia en cada sesion o solicitud.',
-          'Sin eso, el formulario queda expuesto.'
+          'Empieza con la letra s.',
+          'Se usa junto con -p o -sS en muchos ejemplos.',
+          'La v va en mayuscula en la documentacion oficial.'
         ]
       }
     ]
   },
   {
-    slug: 'login',
-    title: 'Login Debil',
-    intro: 'Practica errores de login comunes en apps reales.',
+    slug: 'lfi',
+    title: 'LFI',
+    intro: 'Mini reto guiado para entender lectura de archivos locales en parametros inseguros.',
+    levels: [
+      {
+        id: 2,
+        title: 'Nivel 2: Lectura local',
+        objective: 'Reconocer que archivo sencillo puede usarse para demostrar un LFI basico.',
+        open: 'Observa el ejemplo de ruta vulnerable y responde la pregunta.',
+        observe: 'Que un parametro file= permite salir del directorio esperado.',
+        deliver: 'Responde con la extension pedida, recibe la flag y validala abajo.',
+        challenge: '¿Cual es la extension del archivo ayuda.txt que se muestra en el ejemplo?',
+        sampleAnswer: 'txt',
+        answer: 'txt',
+        steps: [
+          'Revisa el ejemplo de traversal.',
+          'Responde el mini ejercicio.',
+          'Valida la flag para pasar al nivel 3.'
+        ],
+        hints: [
+          'Es una extension muy comun de archivo plano.',
+          'Tiene tres letras.',
+          'Termina en t.'
+        ]
+      }
+    ]
+  },
+  {
+    slug: 'bruteforce',
+    title: 'Fuerza Bruta',
+    intro: 'Mini reto guiado para ver por que contrasenas comunes caen rapido en ataques automaticos.',
     levels: [
       {
         id: 3,
-        title: 'Nivel A: muchos intentos',
-        objective: 'Comprobar si el login permite demasiados intentos sin bloqueo.',
-        open: 'Lee la pregunta del mini ejercicio de esta tarjeta.',
-        observe: 'Que el sistema deberia limitar intentos seguidos.',
-        deliver: 'Escribe la respuesta, pulsa "Comprobar respuesta" y luego valida la flag.',
-        challenge: '¿Como se llama el control que limita intentos de login por tiempo?',
-        sampleAnswer: 'rate limit',
-        answer: 'rate limit',
+        title: 'Nivel 3: Password comun',
+        objective: 'Entender por que usar claves comunes facilita un ataque de fuerza bruta.',
+        open: 'Mira la lista de passwords mas usados y responde la pregunta.',
+        observe: 'Que los atacantes prueban primero patrones conocidos.',
+        deliver: 'Escribe la clave pedida, obten la flag y validala abajo.',
+        challenge: '¿Que password comun se usa en este mini reto como ejemplo principal?',
+        sampleAnswer: 'admin',
+        answer: 'admin',
         steps: [
-          'Lee el problema del login.',
-          'Responde el mini ejercicio.',
-          'Valida la flag para continuar.'
+          'Haz el intento en el demo de login.',
+          'Responde la pregunta de validacion.',
+          'Valida la flag para abrir el nivel 4.'
         ],
         hints: [
-          'Es un limite de velocidad/cantidad de intentos.',
-          'Se suele aplicar por IP o por usuario.',
-          'Sin este control, la fuerza bruta es mas facil.'
-        ]
-      },
-      {
-        id: 4,
-        title: 'Nivel B: clave facil',
-        objective: 'Entender por que claves simples son peligrosas.',
-        open: 'Lee el mini ejercicio de esta tarjeta.',
-        observe: 'Que un PIN como 0000 es muy facil de adivinar.',
-        deliver: 'Responde la pregunta, comprueba y valida la flag.',
-        challenge: 'Una clave como 0000 se considera clave...',
-        sampleAnswer: 'debil',
-        answer: 'debil',
-        steps: [
-          'Piensa en el riesgo de claves faciles.',
-          'Responde el mini ejercicio.',
-          'Valida la flag y avanza.'
-        ],
-        hints: [
-          'No es segura ni robusta.',
-          'Es corta y comun.',
-          'La palabra esperada describe baja seguridad.'
+          'Es una palabra corta muy usada por defecto.',
+          'Muchas instalaciones viejas la dejan tal cual.',
+          'Tiene cinco letras.'
         ]
       }
     ]
   },
   {
-    slug: 'sqli',
-    title: 'SQL Injection',
-    intro: 'Aprende a detectar y explotar un login con SQL Injection.',
+    slug: 'database',
+    title: 'Bases de Datos',
+    intro: 'Mini reto guiado para ubicar la flag como un campo dentro de una tabla simple.',
+    levels: [
+      {
+        id: 4,
+        title: 'Nivel 4: Campo objetivo',
+        objective: 'Reconocer en que campo de una tabla se almacena la flag del reto.',
+        open: 'Lee la tabla de ejemplo y responde la pregunta.',
+        observe: 'Que la flag no esta en id ni en username, sino en una columna dedicada.',
+        deliver: 'Escribe el nombre de la columna, recibe la flag y validala.',
+        challenge: '¿Como se llama la columna marcada como dato sensible?',
+        sampleAnswer: 'dato_sensible',
+        answer: 'datosensible',
+        steps: [
+          'Observa las columnas de la tabla.',
+          'Identifica donde esta el valor sensible.',
+          'Valida la flag para llegar al ultimo nivel.'
+        ],
+        hints: [
+          'Es una columna compuesta por dos palabras.',
+          'Comienza con dato.',
+          'La segunda palabra es sensible.'
+        ]
+      }
+    ]
+  },
+  {
+    slug: 'privesc',
+    title: 'Privilege Esc',
+    intro: 'Mini reto guiado para recordar la base tecnica del bit SUID en Linux.',
     levels: [
       {
         id: 5,
-        title: 'Nivel A: inyeccion alternativa',
-        objective: 'Resolver el login con una inyeccion distinta al OR 1=1.',
-        open: 'Lee la pregunta del mini ejercicio.',
-        observe: 'Que SQLi tambien puede usar UNION.',
-        deliver: 'Escribe la respuesta, comprueba y valida la flag.',
-        challenge: '¿Que palabra SQL se usa para unir resultados de consultas?',
-        sampleAnswer: 'union',
-        answer: 'union',
+        title: 'Nivel 5: Bit SUID',
+        objective: 'Entender que valor representa el bit SUID en permisos especiales.',
+        open: 'Lee el resumen de SUID y responde la pregunta final.',
+        observe: 'Que el bit SUID permite ejecutar binarios con privilegios del owner.',
+        deliver: 'Responde con el valor correcto, obten la flag y termina el warmup.',
+        challenge: '¿Como se llama normalmente los privilegios especiales?',
+        sampleAnswer: 'root',
+        answer: 'root',
         steps: [
-          'Lee la tecnica indicada.',
-          'Responde el mini ejercicio.',
-          'Valida la flag para continuar.'
+          'Revisa el ejemplo de permisos especiales.',
+          'Responde la pregunta tecnica.',
+          'Valida la ultima flag para completar el warmup.'
         ],
         hints: [
-          'No es OR 1=1.',
-          'Empieza con U y tiene 5 letras.',
-          'Va junto a SELECT en muchos ejemplos.'
-        ]
-      },
-      {
-        id: 6,
-        title: 'Nivel B: por tiempo',
-        objective: 'Usar el tiempo de respuesta para validar inyeccion.',
-        open: 'Lee la pregunta del mini ejercicio.',
-        observe: 'Que un retraso de respuesta puede confirmar una SQLi.',
-        deliver: 'Responde, comprueba y valida la flag en el formulario.',
-        challenge: 'Si confirmas SQLi comparando retraso de respuesta, es SQLi por...',
-        sampleAnswer: 'tiempo',
-        answer: 'tiempo',
-        steps: [
-          'Piensa en dos respuestas con distinto tiempo.',
-          'Responde el mini ejercicio.',
-          'Valida la flag cuando aparezca.'
-        ],
-        hints: [
-          'La palabra es corta.',
-          'Tambien se dice SQLi "time-based".',
-          'En espanol, se refiere al reloj/espera.'
-        ]
-      }
-    ]
-  },
-  {
-    slug: 'xss',
-    title: 'Cross-Site Scripting',
-    intro: 'Practica como un texto puede convertirse en codigo dentro del navegador.',
-    levels: [
-      {
-        id: 7,
-        title: 'Nivel A: texto que se interpreta',
-        objective: 'Ver si la app interpreta HTML enviado por el usuario.',
-        open: 'Lee el mini ejercicio de esta tarjeta.',
-        observe: 'Que innerHTML interpreta etiquetas en vez de mostrarlas como texto.',
-        deliver: 'Escribe la respuesta, comprueba y valida la flag.',
-        challenge: '¿Que tipo de XSS se ejecuta cuando inyectas codigo en la URL y aparece directamente en la pagina?',
-        sampleAnswer: 'reflected',
-        answer: 'reflected',
-        steps: [
-          'Lee la diferencia entre texto y HTML interpretado.',
-          'Responde el mini ejercicio.',
-          'Valida la flag obtenida.'
-        ],
-        hints: [
-          'La palabra es "Reflected".',
-          'Completa: XSS ________.',
-          'Mira el titulo del mini desafio.'
-        ]
-      },
-      {
-        id: 8,
-        title: 'Nivel B: evento sencillo',
-        objective: 'Ejecutar una accion simple usando un evento HTML.',
-        open: 'Lee la pregunta del mini ejercicio.',
-        observe: 'Que ciertos eventos HTML pueden ejecutar codigo.',
-        deliver: 'Responde, comprueba y valida la flag.',
-        challenge: '¿Cual es el tipo de XSS donde el navegador ejecuta codigo malicioso sin que el servidor participe?',
-        sampleAnswer: 'dom-based',
-        answer: 'dom-based',
-        steps: [
-          'Lee el ejemplo de evento comun.',
-          'Responde el mini ejercicio.',
-          'Valida la flag para continuar.'
-        ],
-        hints: [
-          'Empieza con "DOM".',
-          'Completa: DOM-________.',
-          'Mira el titulo del mini desafio.'
+          'Es un valor de cuatro digitos.',
+          'Empieza con 4.',
+          'Se combina con permisos como 755 o 4755.'
         ]
       }
     ]

@@ -7,19 +7,26 @@ const CTF_FLAGS = {
 };
 
 const WARMUP_FLAGS = {
-  1: 'WARMUP{csrf_fundamentos_a}',
-  2: 'WARMUP{csrf_fundamentos_b}',
-  3: 'WARMUP{login_debil_a}',
-  4: 'WARMUP{login_debil_b}',
-  5: 'WARMUP{sqli_no_trivial_a}',
-  6: 'WARMUP{sqli_no_trivial_b}',
-  7: 'WARMUP{xss_contexto_a}',
-  8: 'WARMUP{xss_contexto_b}',
-  9: 'WARMUP{idor_burpsuite_a}',
-  10: 'WARMUP{idor_burpsuite_b}'
+  1: 'WARMUP{nmap_service_detection}',
+  2: 'WARMUP{lfi_local_file_read}',
+  3: 'WARMUP{bruteforce_common_password}',
+  4: 'WARMUP{database_flag_column}',
+  5: 'WARMUP{privesc_suid_bit}'
 };
+
+function getFinalValidatorFlag() {
+  const codes = [
+    65, 67, 65, 68, 69, 77, 73, 65, 123,
+    109, 105, 115, 105, 111, 110, 95, 99, 117, 109, 112, 108, 105, 100, 97,
+    95, 114, 111, 111, 116, 95, 117, 99, 110,
+    125
+  ];
+
+  return String.fromCharCode(...codes);
+}
 
 module.exports = {
   CTF_FLAGS,
-  WARMUP_FLAGS
+  WARMUP_FLAGS,
+  getFinalValidatorFlag
 };

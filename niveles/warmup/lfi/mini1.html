@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warmup - LFI</title>
+  <link rel="stylesheet" href="/public/styles.css">
+  <style>
+    .demo-box {
+      background: rgba(20, 14, 9, 0.75);
+      border: 1px solid rgba(129, 199, 132, 0.35);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+    }
+    .code-box {
+      background: #111;
+      color: #e5ffe7;
+      border: 1px solid rgba(129, 199, 132, 0.35);
+      border-radius: 8px;
+      padding: 14px;
+      overflow-x: auto;
+      font-family: Consolas, monospace;
+    }
+    .form-demo {
+      background: rgba(20, 14, 9, 0.75);
+      border: 1px solid rgba(255, 154, 60, 0.28);
+      border-radius: 8px;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .form-demo input,
+    .form-demo button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    .form-demo input {
+      background: rgba(10, 7, 4, 0.86);
+      border: 1px solid rgba(255, 154, 60, 0.38);
+      color: #f6f2e6;
+      border-radius: 6px;
+    }
+    .form-demo button {
+      background: #81c784;
+      border: none;
+      color: #102910;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .status-box {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 6px;
+      background: #fff6cc;
+      color: #4a3b00;
+      border-left: 4px solid #d6aa00;
+      font-weight: 700;
+      display: none;
+    }
+    .status-box.success {
+      background: #d7f3df;
+      border-left-color: #2e9d58;
+      color: #104824;
+    }
+    .question-box {
+      border: 1px solid rgba(129, 199, 132, 0.5);
+      border-left: 5px solid #81c784;
+      border-radius: 8px;
+      padding: 12px;
+      background: rgba(129, 199, 132, 0.12);
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero box" style="background: linear-gradient(135deg, #81c784 0%, #43a047 100%); color: #072308;">
+      <div class="badge" style="background: rgba(255,255,255,0.36);">Warmup | Nivel 2</div>
+      <h1>LFI - Local File Inclusion</h1>
+      <p>Reto guiado: lectura de archivos locales</p>
+    </section>
+
+    <section class="box">
+      <h2>Objetivo</h2>
+      <p>Entender un LFI basico: cuando una app carga archivos con un parametro sin validar rutas.</p>
+    </section>
+
+    <section class="box">
+      <h2>Demo rapida</h2>
+      <div class="demo-box">
+        <p>Ruta esperada por la app:</p>
+        <div class="code-box">/page?file=ayuda.txt</div>
+        <p>Intento de traversal:</p>
+        <div class="code-box">/page?file=../../../../etc/passwd</div>
+      </div>
+      <p class="mini-tip">En este warmup la idea es simple: la flag esta en un archivo local con extension conocida.</p>
+    </section>
+
+    <section class="box">
+      <h2>Validar conocimiento</h2>
+      <div class="question-box">
+        <p><strong>Pregunta de conocimiento:</strong> Cual es la extension del archivo ayuda.txt que aparece arriba?</p>
+      </div>
+      <form method="POST" action="/api/warmup/validate" class="form-demo">
+        <input type="hidden" name="section" value="lfi">
+        <input type="hidden" name="mini" value="1">
+        <input type="text" name="answer" placeholder="Escribe tu respuesta" autocomplete="off" required>
+        <button type="submit">Comprobar respuesta</button>
+      </form>
+      <div id="responseStatus" class="status-box"></div>
+    </section>
+
+    <section class="box">
+      <h2>Pistas</h2>
+      <ul class="timed-hints">
+        <li class="hint-item" data-hint-delay="1000">Pista 1: Es la parte que va despues del punto en ayuda.txt.</li>
+        <li class="hint-item" data-hint-delay="30000">Pista 2: Tiene 3 letras.</li>
+        <li class="hint-item" data-hint-delay="60000">Pista 3: Termina con la letra t.</li>
+      </ul>
+    </section>
+
+    <section class="box">
+      <h2>Validar flag y avanzar</h2>
+      <form class="unlock" method="POST" action="/warmup/validar">
+        <input type="hidden" name="nivel" value="2">
+        <label for="flag-w-2">Flag warm-up 2</label>
+        <input id="flag-w-2" name="flag" autocomplete="off" placeholder="WARMUP{...}" required>
+        <button type="submit">Validar flag</button>
+      </form>
+    </section>
+
+    <section class="box">
+      <p><a href="/warmup/">Volver a Warmup</a></p>
+    </section>
+  </main>
+
+  <script>
+    document.querySelector('form[action="/api/warmup/validate"]').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const response = await fetch('/api/warmup/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.fromEntries(formData))
+      });
+      const data = await response.json();
+      const status = document.getElementById('responseStatus');
+      if (data.ok) {
+        status.textContent = 'Correcto. Flag: ' + data.flag;
+        status.classList.add('success');
+      } else {
+        status.textContent = data.message || 'Respuesta incorrecta.';
+        status.classList.remove('success');
+      }
+      status.style.display = 'block';
+    });
+  </script>
+  <script src="/public/timed-hints.js"></script>
+  <script src="/public/lab-extras.js"></script>
+</body>
+</html>
